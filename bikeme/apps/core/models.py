@@ -32,6 +32,7 @@ class Station(models.Model):
     state = models.CharField(max_length=2)
     # derived
     capacity = models.PositiveSmallIntegerField(default=0)
+    updated_at = models.DateTimeField()
 
     class Meta:
         unique_together = ('slug', 'market', )

@@ -16,5 +16,4 @@ class SnapshotAdmin(admin.ModelAdmin):
     date_heirarchy = 'timestamp'
     list_display = ('station', 'bikes', 'docks', 'timestamp')
     list_filter = ('station', )
-
 admin.site.register(models.Snapshot, SnapshotAdmin)
