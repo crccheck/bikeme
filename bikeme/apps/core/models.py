@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 
 class Market(models.Model):
@@ -7,6 +8,11 @@ class Market(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.slug:
+            self.slug = slugify(self.name)
+        super(Market, self).save(*args, **kwargs)
 
 
 class Station(models.Model):
