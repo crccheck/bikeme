@@ -1,7 +1,7 @@
 from dateutil.parser import parse
 import requests
 
-from .models import Market, Station, StationSnapshot
+from .models import Market, Station, Snapshot
 
 
 URL = 'http://bikeme-api.herokuapp.com/{market}/'
@@ -30,7 +30,7 @@ def update_market(market):
             docks=row['docks'],
             status=row['status'],
         )
-        ss, created = StationSnapshot.objects.get_or_create(
+        ss, created = Snapshot.objects.get_or_create(
             timestamp=scraped_at,
             station=station,
             defaults=defaults,

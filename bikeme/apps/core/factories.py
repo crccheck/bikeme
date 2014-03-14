@@ -26,8 +26,8 @@ class StationFactory(factory.django.DjangoModelFactory):
     state = 'AA'
 
 
-class StationSnapshotFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = models.StationSnapshot
+class SnapshotFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = models.Snapshot
     station = factory.SubFactory(StationFactory)
     timestamp = factory.LazyAttribute(lambda __: timezone.now())
     bikes = factory.LazyAttribute(lambda __: random.randint(0, 10))

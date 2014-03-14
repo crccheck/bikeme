@@ -39,7 +39,7 @@ class Station(models.Model):
         super(Station, self).save(*args, **kwargs)
 
 
-class StationSnapshot(models.Model):
+class Snapshot(models.Model):
     STATUS_CHOICES = (
         ('active', 'active'),
         # TODO

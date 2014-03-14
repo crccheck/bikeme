@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from ..factories import MarketFactory, StationFactory, StationSnapshotFactory
+from ..factories import MarketFactory, StationFactory, SnapshotFactory
 # from ..models import *
 
 
@@ -18,8 +18,8 @@ class StationTest(TestCase):
         self.assertIn(station, station.market.stations.all())
 
 
-class StationSnapshotTest(TestCase):
+class SnapshotTest(TestCase):
     def test_sandbox(self):
         station = StationFactory()
-        ss = StationSnapshotFactory(station=station)
+        ss = SnapshotFactory(station=station)
         self.assertTrue(ss, station.history.all())
