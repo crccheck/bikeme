@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.text import slugify
 
@@ -14,6 +15,9 @@ class Market(models.Model):
         if not self.pk and not self.slug:
             self.slug = slugify(self.name)
         super(Market, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('bikeme:market_detail', kwargs={'slug': self.slug})
 
 
 class Station(models.Model):

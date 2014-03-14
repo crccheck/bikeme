@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block main %}
+  <h1>{{ object }}</h1>
+  <ul>
+    {% for station in object.stations.all %}
+      <li>
+        {{ station }}
+        {% for snapshot in station.history.all %}
+        .
+        {% endfor %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
