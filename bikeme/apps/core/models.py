@@ -37,3 +37,22 @@ class Station(models.Model):
         if not self.pk and not self.slug:
             self.slug = slugify(self.name)
         super(Station, self).save(*args, **kwargs)
+
+
+class StationSnapshot(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'active'),
+        # TODO
+    )
+    station = models.ForeignKey(Station, related_name='history')
+    timestamp = models.DateTimeField()
+    bikes = models.PositiveSmallIntegerField(default=0)
+    docks = models.PositiveSmallIntegerField(default=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+
+    def __unicode__(self):
+        return u'{} {}/{} {}'.format(self.station, self.bikes,
+            self.docks, self.timestamp)
+
+    class Meta:
+        ordering = ('timestamp', )

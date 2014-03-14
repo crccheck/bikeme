@@ -1,4 +1,7 @@
+import random
+
 import factory
+from django.utils import timezone
 from faker import Factory
 
 from . import models
@@ -21,3 +24,11 @@ class StationFactory(factory.django.DjangoModelFactory):
     street = factory.LazyAttribute(lambda __: fake.street_address())
     zip = factory.LazyAttribute(lambda __: fake.postcode())
     state = 'AA'
+
+
+class StationSnapshotFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = models.StationSnapshot
+    station = factory.SubFactory(StationFactory)
+    timestamp = factory.LazyAttribute(lambda __: timezone.now())
+    bikes = factory.LazyAttribute(lambda __: random.randint(0, 10))
+    docks = factory.LazyAttribute(lambda __: random.randint(0, 10))
