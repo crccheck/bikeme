@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from . import models
+
+
+admin.site.register(models.Market)
+
+admin.site.register(models.Station)
+
+admin.site.register(models.StationSnapshot)
