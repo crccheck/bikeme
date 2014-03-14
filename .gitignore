@@ -3,3 +3,7 @@
 bikeme.db
 
 *.pyc
+
+# heroku
+static_root
+venv
