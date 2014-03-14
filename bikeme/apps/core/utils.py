@@ -13,6 +13,7 @@ def update_market(market):
     scraped_at = parse(data['now'])
     for row in data['results']:
         state, zip_code = row['state_zip'].split(' ', 2)
+        capacity = row['bikes'] + row['docks']
         defaults = dict(
             latitude=row['latitude'],
             longitude=row['longitude'],
@@ -25,6 +26,9 @@ def update_market(market):
             market=market,
             defaults=defaults,
         )
+        if station.capacity != capacity:
+            station.capacity = capacity
+            station.save()
         defaults = dict(
             bikes=row['bikes'],
             docks=row['docks'],

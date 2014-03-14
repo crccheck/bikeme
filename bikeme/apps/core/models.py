@@ -26,9 +26,12 @@ class Station(models.Model):
     street = models.CharField(max_length=120)
     zip = models.CharField(max_length=5)
     state = models.CharField(max_length=2)
+    # derived
+    capacity = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         unique_together = ('slug', 'market', )
+        ordering = ('market', 'name', )
 
     def __unicode__(self):
         return u'{}, {}'.format(self.name, self.market)
