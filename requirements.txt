@@ -4,3 +4,8 @@ project-runpy==0.3.0
 
 psycopg2==2.5.2
 dj-database-url==0.3.0
+
+# testing
+Faker==0.0.4
+factory-boy==2.3.1
+mock==1.0.1
