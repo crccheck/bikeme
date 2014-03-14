@@ -52,7 +52,9 @@ class StationSnapshot(models.Model):
 
     def __unicode__(self):
         return u'{} {}/{} {}'.format(self.station, self.bikes,
-            self.docks, self.timestamp)
+            self.docks,
+            self.timestamp.strftime('%Y-%m-%d %H:%M'),
+        )
 
     class Meta:
         ordering = ('timestamp', )
