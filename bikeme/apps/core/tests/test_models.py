@@ -15,4 +15,5 @@ class StationTest(TestCase):
     def test_sandbox(self):
         station = StationFactory()
         self.assertTrue(station.market)
+        self.assertTrue(station.slug)
         self.assertIn(station, station.market.stations.all())

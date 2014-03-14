@@ -27,8 +27,13 @@ class Station(models.Model):
     zip = models.CharField(max_length=5)
     state = models.CharField(max_length=2)
 
+    class Meta:
+        unique_together = ('slug', 'market', )
+
     def __unicode__(self):
         return u'{}, {}'.format(self.name, self.market)
 
-    class Meta:
-        unique_together = ('slug', 'market', )
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.slug:
+            self.slug = slugify(self.name)
+        super(Station, self).save(*args, **kwargs)
