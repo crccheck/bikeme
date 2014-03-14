@@ -33,7 +33,7 @@ def update_with_defaults(obj, data):
         setfield(obj, key, value)
     if getattr(obj, '_is_dirty', None):
         logger.debug(obj._is_dirty)
-        obj.save(updated_fields=obj._dirty_fields)
+        obj.save(update_fields=obj._dirty_fields)
         del obj._is_dirty
         del obj._dirty_fields
         return True
