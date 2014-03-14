@@ -17,6 +17,8 @@ from project_runpy import env
 import dj_database_url
 
 
+ENVIRONMENT = env.get('ENVIRONMENT')
+
 SECRET_KEY = env.get('SECRET_KEY', '12345')
 
 DEBUG = env.get('DEBUG', False)
@@ -55,7 +57,7 @@ WSGI_APPLICATION = 'bikeme.wsgi.application'
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default='postgis:///bikeme')
+    'default': dj_database_url.config(default='sqlite:///bikeme.db')
 }
 
 # Internationalization
@@ -76,3 +78,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+if ENVIRONMENT == 'test':
+    DEBUG = False
+    DATABASES['default'] = dj_database_url.config(default='sqlite:///:memory:')
