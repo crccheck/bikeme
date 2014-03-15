@@ -6,9 +6,9 @@
     {% for station in object.stations.all %}
       <li>
         {{ station }}
-        {% for snapshot in station.history.all %}
-        .
-        {% endfor %}
+        {# {% for snapshot in station.history.all %} #}
+        {# . #}
+        {# {% endfor %} #}
       </li>
     {% endfor %}
   </ul>
