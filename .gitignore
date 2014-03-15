@@ -3,6 +3,8 @@
 bikeme.db
 
 *.pyc
+.sass-cache
+node_modules
 
 # heroku
 static_root
