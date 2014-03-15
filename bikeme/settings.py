@@ -32,7 +32,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'south',
 
     'bikeme.apps.core',
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -115,5 +115,6 @@ LOGGING = {
 }
 
 if ENVIRONMENT == 'test':
+    INSTALLED_APPS.remove('south')
     DEBUG = False
     DATABASES['default'] = dj_database_url.config(default='sqlite:///:memory:')

@@ -24,6 +24,7 @@ class StationFactory(factory.django.DjangoModelFactory):
     street = factory.LazyAttribute(lambda __: fake.street_address())
     zip = factory.LazyAttribute(lambda __: fake.postcode())
     state = 'AA'
+    updated_at = factory.LazyAttribute(lambda __: timezone.now())
 
 
 class SnapshotFactory(factory.django.DjangoModelFactory):
