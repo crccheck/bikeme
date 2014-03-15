@@ -7,23 +7,18 @@
     #map {
       height: 600px;
     }
+    .filled-marker {
+
+    }
   </style>
 {% endblock %}
 
 
 {% block main %}
   <h1>{{ object }}</h1>
+  {# TODO #}
+  {# Last Updated: {{ object.updated_at }} #}
   <div id="map"></div>
-  <ul>
-    {% for station in object.stations.all %}
-      <li>
-        {{ station }}
-        {# {% for snapshot in station.history.all %} #}
-        {# . #}
-        {# {% endfor %} #}
-      </li>
-    {% endfor %}
-  </ul>
 {% endblock %}
 
 
@@ -32,6 +27,17 @@
     var stations = {{ station_json|safe }};
   </script>
   <script>
+    var getIcon = function (stand) {
+      // http://leafletjs.com/reference.html#divicon
+      var filled = Math.round(stand.bikes / (stand.bikes + stand.docks) * 10);
+      return L.divIcon({
+        className: 'filled-marker',
+        html: '<div class="filled-' + filled + '">X</div>',
+        iconAnchornSize: null,
+        iconAnchor: null
+      });
+    };
+
     // create a map in the "map" div, set the view to a given place and zoom
     var map = L.map('map', {
           scrollWheelZoom: false
@@ -41,6 +47,7 @@
     $.each(stations, function (idx, stand) {
       bounds.push([stand.latitude, stand.longitude]);
       L.marker([stand.latitude, stand.longitude], {
+        icon: getIcon(stand),
         title: stand.name
       }).addTo(map);
     });
