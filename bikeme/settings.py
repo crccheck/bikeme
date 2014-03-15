@@ -90,6 +90,29 @@ STATICFILES_DIRS = (
     # os.path.join(BASE_DIR, 'static'),
 )
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'project_runpy.ColorizingStreamHandler',
+        },
+    },
+    'filters': {
+        'readable_sql': {
+            '()': 'project_runpy.ReadableSqlFilter',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console', ],
+            'level': 'DEBUG',
+            'filters': ['readable_sql', ],
+        },
+    },
+}
+
 if ENVIRONMENT == 'test':
     DEBUG = False
     DATABASES['default'] = dj_database_url.config(default='sqlite:///:memory:')
