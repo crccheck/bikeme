@@ -67,11 +67,13 @@ def update_market(market):
             docks=row['docks'],
             status=row['status'],
         )
-        ss, created = Snapshot.objects.get_or_create(
+        snapshot, created = Snapshot.objects.get_or_create(
             timestamp=scraped_at,
             station=station,
             defaults=defaults,
         )
+        station.latest_snapshot = snapshot
+        station.save()
 
 
 def update_all_markets():
