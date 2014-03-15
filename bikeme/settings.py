@@ -115,6 +115,7 @@ LOGGING = {
 }
 
 if ENVIRONMENT == 'test':
-    INSTALLED_APPS.remove('south')
     DEBUG = False
     DATABASES['default'] = dj_database_url.config(default='sqlite:///:memory:')
+    INSTALLED_APPS.remove('south')
+    LOGGING['loggers']['django.db.backends']['level'] = 'ERROR'

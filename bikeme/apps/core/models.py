@@ -33,6 +33,8 @@ class Station(models.Model):
     # derived
     capacity = models.PositiveSmallIntegerField(default=0)
     updated_at = models.DateTimeField()
+    latest_snapshot = models.OneToOneField('Snapshot', null=True, blank=True,
+            related_name='+', editable=False)
 
     class Meta:
         unique_together = ('slug', 'market', )
