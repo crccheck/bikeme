@@ -1,7 +1,19 @@
 {% extends "base.html" %}
 
+{% block extra_style %}{{ block.super }}
+  <style>
+    .active { color: blue; }
+    .fa { width: 1.5em; }
+    #map {
+      height: 600px;
+    }
+  </style>
+{% endblock %}
+
+
 {% block main %}
   <h1>{{ object }}</h1>
+  <div id="map"></div>
   <ul>
     {% for station in object.stations.all %}
       <li>
@@ -12,4 +24,32 @@
       </li>
     {% endfor %}
   </ul>
+{% endblock %}
+
+
+{% block extra_script %}{{ block.super }}
+  <script>
+    var stations = {{ station_json|safe }};
+  </script>
+  <script>
+    // create a map in the "map" div, set the view to a given place and zoom
+    var map = L.map('map', {
+          scrollWheelZoom: false
+        }),
+        bounds = [];
+
+    $.each(stations, function (idx, stand) {
+      bounds.push([stand.latitude, stand.longitude]);
+      L.marker([stand.latitude, stand.longitude], {
+        title: stand.name
+      }).addTo(map);
+    });
+
+    // add an OpenStreetMap tile layer
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    map.fitBounds(bounds);
+  </script>
 {% endblock %}
