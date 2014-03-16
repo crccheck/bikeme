@@ -39,15 +39,31 @@
   // * GEOLOCATION *
   // ***************
 
+  var myLocation = null;
+
   var zoomMap = function (position) {
-    var point = L.latLng(position.coords.latitude, position.coords.longitude);
-    map.panTo(point);
+    myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+    map.panTo(myLocation);
     map.setZoom(16);
-    L.marker(point).addTo(map);
+    L.marker(myLocation).addTo(map);
+    map.addControl(new GoHomeControl());
   };
 
-  navigator.geolocation.getCurrentPosition(zoomMap);
+  var GoHomeControl = L.Control.extend({
+    options: {
+      position: 'topright'
+    },
+    onAdd: function (map) {
+      var container = L.DomUtil.create('div', 'leaflet-control-home leaflet-bar');
+      $(container).html('<a class="" href="#" title="Go home"><span class="fa fa-crosshairs"></span></a>')
+        .find('a').on('click', function (e) {
+          e.preventDefault();
+          map.panTo(myLocation);
+        });
+      return container;
+    }
+  });
 
-  // todo add widget to re-center map
+  navigator.geolocation.getCurrentPosition(zoomMap);
 
 })();
