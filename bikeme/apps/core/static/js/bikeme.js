@@ -15,8 +15,8 @@
 
   var buildChart = function ($el, data) {
     var plotBox = {
-      width: 700,
-      height: 100
+      width: 300,
+      height: 200
     };
 
     var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
@@ -38,17 +38,17 @@
 
     var svg = d3.select($el[0])
       .append('svg')
-      .attr('width', '350')
-      .attr('height', '50')
-      .attr('viewBox', '0 0 700 100')
+      .attr('width', plotBox.width + 20)
+      .attr('height', plotBox.height + 40)
+      .attr('viewBox', [0, 0, plotBox.width, plotBox.height].join(' '))
       .attr('preserveAspectRatio', 'xMinYMin meet');
 
     var plot = svg
       .append('g')
       .attr('class', 'plot')
-      .attr('width', '700')
-      .attr('height', '100')
-      .attr('transform', 'translate(0, 0)');
+      .attr('width', plotBox.width)
+      .attr('height', plotBox.height)
+      .attr('transform', 'translate(20, 0)');
 
     var xScale = d3.time.scale()
       .range([0, plotBox.width])
@@ -56,23 +56,43 @@
 
     var yScale = d3.scale.linear()
       .range([0, plotBox.height])
-      .domain([0, 20]);
+      .domain([cleanedData[0].bikes + cleanedData[0].docks, 0]);
+
+    var xAxis = d3.svg.axis()
+      .scale(xScale)
+      .orient('bottom');
+
+    var yAxis = d3.svg.axis()
+      .scale(yScale)
+      .orient('left');
 
     var line = d3.svg.line()
       .x(function (d) { return xScale(d.date); })
       .y(function (d) { return yScale(d.bikes); });
 
+    svg.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', 'translate(20, ' + plotBox.height + ')')
+      .call(xAxis);
+
+    svg.append('g')
+      .attr('class', 'y axis')
+      .attr('transform', 'translate(20, 0)')
+      .call(yAxis);
+
     plot.append('path')
       .datum(cleanedData)
       .attr('class', 'line')
       .attr('d', line);
+
+    $el.width($(svg[0][0]).attr('width') + 40);
   };
 
   var showStandInfo = function (stand, latlng) {
     var popup = L.popup({
     });
     $.getJSON(stand.url, function (data) {
-      var $paper = $('<div>data</div>');
+      var $paper = $('<div><div>data</div></div>');
       buildChart($paper, data);
       popup.setContent($paper[0]);
     });
