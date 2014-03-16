@@ -228,8 +228,12 @@
     var _update = function () {
       var diff = (Date.now() - updated_at) / 1000,
           nextDiff = next - diff;
-      $last.text(Math.floor(diff));
-      $next.text(Math.floor(nextDiff));
+      $last.html(Math.floor(diff));
+      if (nextDiff < 0) {
+        $next.html('<span style="font-weight: normal;">in progres</span>');
+      } else {
+        $next.html(Math.floor(nextDiff));
+      }
       var now = Date.now();
       if (nextDiff < 0 &&
           // wait at least 5 seconds between updates
