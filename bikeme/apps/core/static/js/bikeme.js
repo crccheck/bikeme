@@ -51,12 +51,6 @@
       lastweek: data.lastweek.map(cleaner(7))
     };
 
-    var access = {
-      x: function (d) { return d.date; },
-      bikes: function (d) { return d[2]; },
-      docks: function (d) { return d[3]; }
-    };
-
     $el.find('.loading').remove();
 
     var svg = d3.select($el[0])
@@ -78,7 +72,10 @@
 
     var xScale = d3.time.scale()
       .range([0, plotBox.width])
-      .domain(d3.extent(cleanedData.yesterday, access.x));
+      .domain([
+        Math.min(cleanedData.recent[0].date, cleanedData.yesterday[0].date),
+        cleanedData.yesterday[cleanedData.yesterday.length - 1].date
+      ]);
 
     var yScale = d3.scale.linear()
       .range([0, plotBox.height])
