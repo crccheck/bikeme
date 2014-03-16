@@ -53,6 +53,7 @@
       docks: function (d) { return d[3]; }
     };
 
+    $el.find('.loading').remove();
 
     var svg = d3.select($el[0])
       .append('svg')
@@ -131,14 +132,21 @@
       // keep popup from cutting off chart
       maxWidth: 10000
     });
+    var $paper = $('<div><h3>Bike Availability at ' + stand.name + '</h3>' +
+      '<div>Bikes: <i>' + stand.bikes + '</i>' +
+      ' Docks: <i>' + stand.docks + '</i>' +
+      ' Status: <i>' + stand.status + '</i>' +
+      '</div>' +
+      '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
+      '</div>');
     $.getJSON(stand.url, function (data) {
-      var $paper = $('<div><h3>Bike Availability</h3></div>');
       buildChart($paper, data);
       popup.setContent($paper[0]);
     });
-    popup.setLatLng(latlng);
-    popup.setContent('loading...');
-    popup.openOn(map);
+    popup
+      .setLatLng(latlng)
+      .setContent($paper[0])
+      .openOn(map);
   };
 
   // create a map in the "map" div, set the view to a given place and zoom
