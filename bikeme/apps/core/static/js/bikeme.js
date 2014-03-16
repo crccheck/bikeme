@@ -2,6 +2,11 @@
 (function () {
   'use strict';
 
+  // Lets us turn json dates into javascript dates
+  var isoToDate = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
+  var tzOffset = new Date().getTimezoneOffset() / -60;
+
+
   var getIcon = function (stand) {
     // http://leafletjs.com/reference.html#divicon
     var filled = Math.round(stand.bikes / (stand.bikes + stand.docks) * 10);
@@ -30,14 +35,11 @@
       right: 7
     };
 
-    var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
-    var tzOffset = new Date().getTimezoneOffset() / -60;
-
     var cleaner = function (days) {
       return function (d) {
         return {
           date: d3.time.day.offset(
-            d3.time.hour.offset(format.parse(d[0]), tzOffset),
+            d3.time.hour.offset(isoToDate.parse(d[0]), tzOffset),
             days
           ),
           bikes: d[2],
@@ -200,8 +202,17 @@
   // **********
 
   var legend = L.control({position: 'bottomleft'}),
-      $legend = $('<div class="legend">Last Update: <span></span> Next Update: <span></span></div>');
-  legend.onAdd = function (map) {
+      $legend = $('<div class="legend">Last Update: <span class="last"></span>s' +
+        ' Next Update: <span class="next"></span></div>');
+  legend.onAdd = function () {
+    var $last = $legend.find('.last');
+    var updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
+    var _update = function () {
+      var diff = (Date.now() - updated_at) / 1000;
+      $last.text(Math.floor(diff));
+    };
+    _update();
+    setInterval(_update, 1000);
     return $legend[0];
   };
   legend.addTo(map);
@@ -260,4 +271,6 @@
   // ***********
 
   window.map = map;
+  window.isoToDate = isoToDate;
+  window.tzOffset = tzOffset;
 })();
