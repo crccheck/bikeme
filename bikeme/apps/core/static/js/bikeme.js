@@ -199,11 +199,13 @@
 
     map.fitBounds(bounds);
   };
+  var lastUpdate = Date.now();
   var updateMap = function () {
     var url = location.pathname + 'data.json';
-    $.getJSON(url, function (data) {
+    return $.getJSON(url, function (data) {
       station_data = data;  // update local storage
       updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
+      lastUpdate = Date.now() + 15 * 1000;  // lie and set `lastUpdate` to the future
       $.each(station_data.stations, function (idx, stand) {
         var marker = markers[stand.url];
         marker.setIcon(getIcon(stand));
@@ -228,8 +230,11 @@
           nextDiff = next - diff;
       $last.text(Math.floor(diff));
       $next.text(Math.floor(nextDiff));
-      if (nextDiff < 0 && nextDiff > -1) {
-        // this should work most of the time :/
+      var now = Date.now();
+      if (nextDiff < 0 &&
+          // wait at least 5 seconds between updates
+          (now - lastUpdate) > 5000) {
+        lastUpdate = now;
         updateMap();
       }
     };
