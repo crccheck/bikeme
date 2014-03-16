@@ -33,4 +33,21 @@
   }).addTo(map);
 
   map.fitBounds(bounds);
+
+
+  // ***************
+  // * GEOLOCATION *
+  // ***************
+
+  var zoomMap = function (position) {
+    var point = L.latLng(position.coords.latitude, position.coords.longitude);
+    map.panTo(point);
+    map.setZoom(16);
+    L.marker(point).addTo(map);
+  };
+
+  navigator.geolocation.getCurrentPosition(zoomMap);
+
+  // todo add widget to re-center map
+
 })();
