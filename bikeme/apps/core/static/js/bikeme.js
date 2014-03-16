@@ -203,13 +203,16 @@
 
   var legend = L.control({position: 'bottomleft'}),
       $legend = $('<div class="legend">Last Update: <span class="last"></span>s' +
-        ' Next Update: <span class="next"></span></div>');
+        ' Next Update: <span class="next"></span>s</div>');
   legend.onAdd = function () {
-    var $last = $legend.find('.last');
+    var $last = $legend.find('.last'),
+        $next = $legend.find('.next');
+    var next = 10 * 60;  // 10 minutes
     var updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
     var _update = function () {
       var diff = (Date.now() - updated_at) / 1000;
       $last.text(Math.floor(diff));
+      $next.text(Math.floor(next - diff));
     };
     _update();
     setInterval(_update, 1000);
