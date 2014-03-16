@@ -98,8 +98,13 @@
       .call(yAxis);
 
     plot.append('path')
+      .datum(cleanedData.yesterday)
+      .attr('class', 'line yesterday')
+      .attr('d', line);
+
+    plot.append('path')
       .datum(cleanedData.recent)
-      .attr('class', 'line')
+      .attr('class', 'line recent')
       .attr('d', line);
 
     // TODO plot.append line at now
