@@ -15,7 +15,7 @@
 
   // create a map in the "map" div, set the view to a given place and zoom
   var map = L.map('map', {
-        scrollWheelZoom: false
+        // scrollWheelZoom: false
       }),
       bounds = [];
 
