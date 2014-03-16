@@ -1,22 +1,12 @@
-/* global $, L, d3, station_data: false */
+/* global $, L, d3: false */
+/* global station_data: true */
 (function () {
   'use strict';
 
   // Lets us turn json dates into javascript dates
   var isoToDate = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
   var tzOffset = new Date().getTimezoneOffset() / -60;
-
-
-  var getIcon = function (stand) {
-    // http://leafletjs.com/reference.html#divicon
-    var filled = Math.round(stand.bikes / (stand.bikes + stand.docks) * 10);
-    return L.divIcon({
-      className: 'filled-marker',
-      html: '<div class="filled-' + filled + '">X</div>',
-      iconAnchornSize: null,
-      iconAnchor: null
-    });
-  };
+  var updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
 
 
   //*******************
@@ -171,9 +161,22 @@
   // * CREATE MAP *
   // **************
 
+  var getIcon = function (stand) {
+    // http://leafletjs.com/reference.html#divicon
+    var filled = Math.round(stand.bikes / (stand.bikes + stand.docks) * 10);
+    return L.divIcon({
+      className: 'filled-marker',
+      html: '<div class="filled-' + filled + '">X</div>',
+      iconAnchornSize: null,
+      iconAnchor: null
+    });
+  };
+
+
   var map = L.map('map', {
         // scrollWheelZoom: false
       }),
+      markers = {},
       bounds = [];
 
   var createMap = function () {
@@ -186,6 +189,7 @@
       marker.on('click', function (e) {
         showStandInfo(stand, e.latlng);
       });
+      markers[stand.url] = marker;
     });
 
     // add an OpenStreetMap tile layer
@@ -194,6 +198,17 @@
     }).addTo(map);
 
     map.fitBounds(bounds);
+  };
+  var updateMap = function () {
+    var url = location.pathname + 'data.json';
+    $.getJSON(url, function (data) {
+      station_data = data;  // update local storage
+      updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
+      $.each(station_data.stations, function (idx, stand) {
+        var marker = markers[stand.url];
+        marker.setIcon(getIcon(stand));
+      });
+    });
   };
   createMap();
 
@@ -208,7 +223,6 @@
     var $last = $legend.find('.last'),
         $next = $legend.find('.next');
     var next = 10 * 60;  // 10 minutes
-    var updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
     var _update = function () {
       var diff = (Date.now() - updated_at) / 1000;
       $last.text(Math.floor(diff));
@@ -274,6 +288,9 @@
   // ***********
 
   window.map = map;
+  window.markers = markers;
+  window.updateMap = updateMap;
   window.isoToDate = isoToDate;
   window.tzOffset = tzOffset;
+  window.updated_at = updated_at;
 })();
