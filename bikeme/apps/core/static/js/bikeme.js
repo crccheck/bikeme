@@ -15,7 +15,7 @@
 
   var buildChart = function ($el, data) {
     var plotBox = {
-      width: 300,
+      width: Math.max(300, $(window).width() >> 1),
       height: 200
     };
 
@@ -109,14 +109,16 @@
 
     // TODO plot.append line at now
 
-    $el.width($(svg[0][0]).attr('width') + 40);
+    // $el.width($(svg[0][0]).attr('width') + 40);
   };
 
   var showStandInfo = function (stand, latlng) {
     var popup = L.popup({
+      // keep popup from cutting off chart
+      maxWidth: 10000
     });
     $.getJSON(stand.url, function (data) {
-      var $paper = $('<div><div>data</div></div>');
+      var $paper = $('<div><h3>Bike Availability</h3></div>');
       buildChart($paper, data);
       popup.setContent($paper[0]);
     });
