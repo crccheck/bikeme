@@ -19,10 +19,10 @@
       height: 200
     };
     var plotMargin = {
-      top: 10,
+      top: 8,
       left: 24,
-      bottom: 56,
-      right: 10
+      bottom: 42,
+      right: 7
     };
 
     var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
@@ -100,7 +100,7 @@
         .style('text-anchor', 'end')
         .attr('dx', '-0.8em')
         .attr('dy', '0.15em')
-        .attr('transform', 'rotate(-65)');
+        .attr('transform', 'rotate(-35)');
 
     svg.append('g')
       .attr('class', 'y axis')
