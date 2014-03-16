@@ -116,9 +116,14 @@
       .attr('class', 'line recent')
       .attr('d', line);
 
-    // TODO plot.append line at now
-
-    // $el.width($(svg[0][0]).attr('width') + 40);
+    plot.append('line')
+      .attr('class', 'now')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', 0)
+      .attr('y2', plotBox.height)
+      .attr('stroke-dasharray', '5, 5')
+      .attr('transform', 'translate(' + xScale(new Date()) + ', 0)');
   };
 
   var showStandInfo = function (stand, latlng) {
