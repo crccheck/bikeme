@@ -48,6 +48,14 @@ class Station(models.Model):
             self.slug = slugify(self.name)
         super(Station, self).save(*args, **kwargs)
 
+    # CUSTOM PROPERTIES
+    @property
+    def resource_url(self):
+        return reverse('bikeme:station_resource', kwargs={
+            'slug': self.market.slug,
+            'station_slug': self.slug,
+        })
+
 
 class Snapshot(models.Model):
     STATUS_CHOICES = (
