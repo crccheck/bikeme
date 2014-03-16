@@ -41,6 +41,13 @@ class MarketDetail(DetailView):
         return data
 
 
+class MarketResource(MarketDetail):
+    def get(self, request, **kwargs):
+        self.object = self.get_object()
+        data = self.get_context_data(**kwargs)
+        return HttpResponse(data['station_json'], content_type='application/json')
+
+
 class StationResource(DetailView):
     model = models.Station
 
