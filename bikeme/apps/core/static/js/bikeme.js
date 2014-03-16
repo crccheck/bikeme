@@ -13,6 +13,14 @@
     });
   };
 
+  var showStandInfo = function (stand, latlng) {
+    var popup = L.popup({
+    });
+    popup.setLatLng(latlng);
+    popup.setContent('test');
+    popup.openOn(map);
+  };
+
   // create a map in the "map" div, set the view to a given place and zoom
   var map = L.map('map', {
         // scrollWheelZoom: false
@@ -21,10 +29,13 @@
 
   $.each(stations, function (idx, stand) {
     bounds.push([stand.latitude, stand.longitude]);
-    L.marker([stand.latitude, stand.longitude], {
+    var marker = L.marker([stand.latitude, stand.longitude], {
       icon: getIcon(stand),
       title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
     }).addTo(map);
+    marker.on('click', function (e) {
+      showStandInfo(stand, e.latlng);
+    });
   });
 
   // add an OpenStreetMap tile layer
