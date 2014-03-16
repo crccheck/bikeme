@@ -79,6 +79,7 @@ class StationResource(DetailView):
         lastweek = map(self.snapshot_to_json, lastweek_qs)
 
         data = {
+            'capacity': station.capacity,
             'recent': recent,
             'yesterday': yesterday,
             'lastweek': lastweek,

@@ -82,7 +82,7 @@
 
     var yScale = d3.scale.linear()
       .range([0, plotBox.height])
-      .domain([cleanedData.recent[0].bikes + cleanedData.recent[0].docks, 0]);
+      .domain([data.capacity, 0]);
 
     var xAxis = d3.svg.axis()
       .scale(xScale)
