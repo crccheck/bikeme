@@ -13,6 +13,11 @@
     });
   };
 
+
+  //*******************
+  //* D3 AWWWW YISSSS *
+  //*******************
+
   var buildChart = function ($el, data) {
     var plotBox = {
       width: Math.max(300, $(window).width() >> 1),
@@ -26,7 +31,6 @@
     };
 
     var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
-
     var tzOffset = new Date().getTimezoneOffset() / -60;
 
     var cleaner = function (days) {
@@ -127,6 +131,11 @@
       .attr('transform', 'translate(' + xScale(new Date()) + ', 0)');
   };
 
+
+  // *************
+  // * MAP POPUP *
+  // *************
+
   var showStandInfo = function (stand, latlng) {
     var popup = L.popup({
       // keep popup from cutting off chart
@@ -182,6 +191,10 @@
 
   var zoomMap = function (position) {
     myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+    if (!map.getBounds().contains(myLocation)) {
+      // user's location is not worth panning to
+      return;
+    }
     map.panTo(myLocation);
     map.setZoom(16);
     L.marker(myLocation).addTo(map);
@@ -212,4 +225,10 @@
 
   navigator.geolocation.getCurrentPosition(zoomMap);
 
+
+  // ***********
+  // * EXPORTS *
+  // ***********
+
+  window.map = map;
 })();
