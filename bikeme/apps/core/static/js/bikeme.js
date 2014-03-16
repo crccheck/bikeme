@@ -1,4 +1,4 @@
-/* global $, L, stations: false */
+/* global $, L, d3, stations: false */
 (function () {
   'use strict';
 
@@ -13,14 +13,68 @@
     });
   };
 
+  var buildChart = function ($el, data) {
+    var plotBox = {
+      width: 700,
+      height: 100
+    };
+
+    var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
+
+    var cleanedData = data.recent.map(function (d) {
+      return {
+        date: format.parse(d[0]),
+        bikes: d[2],
+        docks: d[3]
+      };
+    });
+
+    var access = {
+      x: function (d) { return d.date; },
+      bikes: function (d) { return d[2]; },
+      docks: function (d) { return d[3]; }
+    };
+
+
+    var svg = d3.select($el[0])
+      .append('svg')
+      .attr('width', '350')
+      .attr('height', '50')
+      .attr('viewBox', '0 0 700 100')
+      .attr('preserveAspectRatio', 'xMinYMin meet');
+
+    var plot = svg
+      .append('g')
+      .attr('class', 'plot')
+      .attr('width', '700')
+      .attr('height', '100')
+      .attr('transform', 'translate(0, 0)');
+
+    var xScale = d3.time.scale()
+      .range([0, plotBox.width])
+      .domain(d3.extent(cleanedData, access.x));
+
+    var yScale = d3.scale.linear()
+      .range([0, plotBox.height])
+      .domain([0, 20]);
+
+    var line = d3.svg.line()
+      .x(function (d) { return xScale(d.date); })
+      .y(function (d) { return yScale(d.bikes); });
+
+    plot.append('path')
+      .datum(cleanedData)
+      .attr('class', 'line')
+      .attr('d', line);
+  };
+
   var showStandInfo = function (stand, latlng) {
     var popup = L.popup({
     });
     $.getJSON(stand.url, function (data) {
-      $.each(data.recent, function (idx, d) {
-        console.log(d);
-      });
-      popup.setContent('' + data);
+      var $paper = $('<div>data</div>');
+      buildChart($paper, data);
+      popup.setContent($paper[0]);
     });
     popup.setLatLng(latlng);
     popup.setContent('loading...');
