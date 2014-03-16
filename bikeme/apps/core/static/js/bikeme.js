@@ -21,13 +21,25 @@
 
     var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
 
-    var cleanedData = data.recent.map(function (d) {
-      return {
-        date: format.parse(d[0]),
-        bikes: d[2],
-        docks: d[3]
+    var tzOffset = new Date().getTimezoneOffset() / -60;
+
+    var cleaner = function (days) {
+      return function (d) {
+        return {
+          date: d3.time.day.offset(
+            d3.time.hour.offset(format.parse(d[0]), tzOffset),
+            days
+          ),
+          bikes: d[2],
+          docks: d[3]
+        };
       };
-    });
+    };
+    var cleanedData = {
+      recent: data.recent.map(cleaner(0)),
+      yesterday: data.yesterday.map(cleaner(1)),
+      lastweek: data.lastweek.map(cleaner(7))
+    };
 
     var access = {
       x: function (d) { return d.date; },
@@ -40,7 +52,7 @@
       .append('svg')
       .attr('width', plotBox.width + 20)
       .attr('height', plotBox.height + 40)
-      .attr('viewBox', [0, 0, plotBox.width, plotBox.height].join(' '))
+      .attr('viewBox', [0, 0, plotBox.width + 20 + 10, plotBox.height + 40].join(' '))
       .attr('preserveAspectRatio', 'xMinYMin meet');
 
     var plot = svg
@@ -52,11 +64,11 @@
 
     var xScale = d3.time.scale()
       .range([0, plotBox.width])
-      .domain(d3.extent(cleanedData, access.x));
+      .domain(d3.extent(cleanedData.yesterday, access.x));
 
     var yScale = d3.scale.linear()
       .range([0, plotBox.height])
-      .domain([cleanedData[0].bikes + cleanedData[0].docks, 0]);
+      .domain([cleanedData.recent[0].bikes + cleanedData.recent[0].docks, 0]);
 
     var xAxis = d3.svg.axis()
       .scale(xScale)
@@ -73,7 +85,12 @@
     svg.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(20, ' + plotBox.height + ')')
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll('text')
+        .style('text-anchor', 'end')
+        .attr('dx', '-0.8em')
+        .attr('dy', '0.15em')
+        .attr('transform', 'rotate(-65)');
 
     svg.append('g')
       .attr('class', 'y axis')
@@ -81,9 +98,11 @@
       .call(yAxis);
 
     plot.append('path')
-      .datum(cleanedData)
+      .datum(cleanedData.recent)
       .attr('class', 'line')
       .attr('d', line);
+
+    // TODO plot.append line at now
 
     $el.width($(svg[0][0]).attr('width') + 40);
   };

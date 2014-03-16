@@ -51,23 +51,26 @@ class StationResource(DetailView):
         ]
 
     def get(self, request, **kwargs):
-        del_recent = datetime.timedelta(hours=12)
-        del_day = datetime.timedelta(days=1)
-        del_week = datetime.timedelta(days=7)
+        del_window = datetime.timedelta(hours=12)
         serializer = DjangoJSONEncoder()
         station = self.model.objects.get(market__slug=kwargs['slug'],
                 slug=kwargs['station_slug'])
 
         # make querysets
+        recent_start = timezone.now() - datetime.timedelta(hours=11)
         recent_qs = station.history.filter(
-                timestamp__gt=timezone.now() - del_recent)
-        yesterday_qs = station.history.filter(
-            timestamp__lte=timezone.now() - del_day,
-            timestamp__gt=timezone.now() - del_recent - del_day,
+            timestamp__gt=recent_start,
+            timestamp__lte=recent_start + del_window,
         )
+        yesterday_start = recent_start - datetime.timedelta(days=1)
+        yesterday_qs = station.history.filter(
+            timestamp__gt=yesterday_start,
+            timestamp__lte=yesterday_start + del_window,
+        )
+        lastweek_start = recent_start - datetime.timedelta(days=7)
         lastweek_qs = station.history.filter(
-            timestamp__lte=timezone.now() - del_week,
-            timestamp__gt=timezone.now() - del_recent - del_week,
+            timestamp__gt=lastweek_start,
+            timestamp__lte=lastweek_start + del_window,
         )
 
         # convert querysets to json
