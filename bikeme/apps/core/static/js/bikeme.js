@@ -1,4 +1,4 @@
-/* global $, L, d3, stations: false */
+/* global $, L, d3, station_data: false */
 (function () {
   'use strict';
 
@@ -175,7 +175,7 @@
       bounds = [];
 
   var createMap = function () {
-    $.each(stations, function (idx, stand) {
+    $.each(station_data.stations, function (idx, stand) {
       bounds.push([stand.latitude, stand.longitude]);
       var marker = L.marker([stand.latitude, stand.longitude], {
         icon: getIcon(stand),
@@ -195,6 +195,16 @@
   };
   createMap();
 
+  // **********
+  // * LEGEND *
+  // **********
+
+  var legend = L.control({position: 'bottomleft'}),
+      $legend = $('<div class="legend">Last Update: <span></span> Next Update: <span></span></div>');
+  legend.onAdd = function (map) {
+    return $legend[0];
+  };
+  legend.addTo(map);
 
   // ***************
   // * GEOLOCATION *
