@@ -164,29 +164,36 @@
       .openOn(map);
   };
 
-  // create a map in the "map" div, set the view to a given place and zoom
+
+  // **************
+  // * CREATE MAP *
+  // **************
+
   var map = L.map('map', {
         // scrollWheelZoom: false
       }),
       bounds = [];
 
-  $.each(stations, function (idx, stand) {
-    bounds.push([stand.latitude, stand.longitude]);
-    var marker = L.marker([stand.latitude, stand.longitude], {
-      icon: getIcon(stand),
-      title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
-    }).addTo(map);
-    marker.on('click', function (e) {
-      showStandInfo(stand, e.latlng);
+  var createMap = function () {
+    $.each(stations, function (idx, stand) {
+      bounds.push([stand.latitude, stand.longitude]);
+      var marker = L.marker([stand.latitude, stand.longitude], {
+        icon: getIcon(stand),
+        title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
+      }).addTo(map);
+      marker.on('click', function (e) {
+        showStandInfo(stand, e.latlng);
+      });
     });
-  });
 
-  // add an OpenStreetMap tile layer
-  L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
-    attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
-  }).addTo(map);
+    // add an OpenStreetMap tile layer
+    L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
+      attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
+    }).addTo(map);
 
-  map.fitBounds(bounds);
+    map.fitBounds(bounds);
+  };
+  createMap();
 
 
   // ***************
