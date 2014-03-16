@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 
-{% block extra_style %}{{ block.super }}
-  <style>
-    .active { color: blue; }
-    .fa { width: 1.5em; }
-  </style>
-{% endblock %}
-
+{% block head_title %}{{ object }}{% endblock %}
 
 {% block main %}
   <h1>{{ object }}</h1>
