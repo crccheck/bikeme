@@ -1,3 +1,6 @@
+$recent: dodgerblue
+$yesterday: peru
+
 .axis
   path, line
     fill: none
@@ -7,11 +10,19 @@
 .line
   fill: none
   &.recent
-    stroke: black
-    stroke-width: 3px
+    stroke: $recent
+    stroke-width: 2px
   &.yesterday
-    stroke: gray
+    stroke: $yesterday
     stroke-width: 1.5px
+
+.area
+  &.yesterday
+    fill: rgba($yesterday, 0.15)
+  &.recent
+    fill: rgba($recent, 0.15)
+
+
 line.now
   stroke: cornflowerblue
   stroke-width: 1px

@@ -95,6 +95,10 @@
     var line = d3.svg.line()
       .x(function (d) { return xScale(d.date); })
       .y(function (d) { return yScale(d.bikes); });
+    var area = d3.svg.area()
+      .x(function (d) { return xScale(d.date); })
+      .y0(plotBox.height)
+      .y1(function (d) { return yScale(d.bikes); });
 
     svg.append('g')
       .attr('class', 'x axis')
@@ -111,15 +115,16 @@
       .attr('transform', 'translate(' + plotMargin.left + ', ' + plotMargin.top + ')')
       .call(yAxis);
 
-    plot.append('path')
-      .datum(cleanedData.yesterday)
-      .attr('class', 'line yesterday')
-      .attr('d', line);
-
-    plot.append('path')
-      .datum(cleanedData.recent)
-      .attr('class', 'line recent')
-      .attr('d', line);
+    $.each(['yesterday', 'recent'], function (idx, dataset) {
+      plot.append('path')
+        .datum(cleanedData[dataset])
+        .attr('class', 'area ' + dataset)
+        .attr('d', area);
+      plot.append('path')
+        .datum(cleanedData[dataset])
+        .attr('class', 'line ' + dataset)
+        .attr('d', line);
+    });
 
     plot.append('line')
       .attr('class', 'now')
