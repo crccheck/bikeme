@@ -7,6 +7,7 @@ class Market(models.Model):
     """A market where bikes can be found, usually a city."""
     name = models.CharField(max_length=30)
     slug = models.SlugField(max_length=30, unique=True)
+    active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
@@ -35,6 +36,7 @@ class Station(models.Model):
     updated_at = models.DateTimeField()
     latest_snapshot = models.OneToOneField('Snapshot', null=True, blank=True,
             related_name='+', editable=False)
+    active = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('slug', 'market', )
