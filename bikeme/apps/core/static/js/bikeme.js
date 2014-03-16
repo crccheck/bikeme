@@ -88,6 +88,10 @@
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient('left');
+    if (data.capacity < 10) {
+      // Because you can't have 3.5 bikes
+      yAxis.ticks(data.capacity);
+    }
 
     var line = d3.svg.line()
       .x(function (d) { return xScale(d.date); })
