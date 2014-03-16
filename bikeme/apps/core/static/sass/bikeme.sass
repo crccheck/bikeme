@@ -1,4 +1,5 @@
 @import "compass/css3/border-radius"
+@import "compass/css3/box-sizing"
 @import "compass/css3/images"
 
 $empty-color: darkslategray
@@ -30,12 +31,11 @@ h3
 
 .filled-marker
   +border-radius(3px)
+  +box-sizing(border-box)
   background: $foreground-color
   border: 3px solid firebrick
   color: transparent
   font-size: 1px
-  height: 14px  // currently ignored
-  width: 10px  // currently ignored
   > *
     background: $background-color
   .filled-0

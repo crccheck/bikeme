@@ -167,7 +167,7 @@
     return L.divIcon({
       className: 'filled-marker',
       html: '<div class="filled-' + filled + '">X</div>',
-      iconAnchornSize: null,
+      iconSize: [16, 19],
       iconAnchor: null
     });
   };
