@@ -16,8 +16,14 @@
   var showStandInfo = function (stand, latlng) {
     var popup = L.popup({
     });
+    $.getJSON(stand.url, function (data) {
+      $.each(data.recent, function (idx, d) {
+        console.log(d);
+      });
+      popup.setContent('' + data);
+    });
     popup.setLatLng(latlng);
-    popup.setContent('test');
+    popup.setContent('loading...');
     popup.openOn(map);
   };
 
@@ -40,7 +46,7 @@
 
   // add an OpenStreetMap tile layer
   L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
-      attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
+    attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
   }).addTo(map);
 
   map.fitBounds(bounds);
