@@ -18,6 +18,9 @@ module.exports = (grunt) ->
       css:
         files: 'bikeme/apps/core/static/css/*.css'
         tasks: []
+      js:
+        files: 'bikeme/apps/core/static/js/*.js'
+        tasks: []
 
   grunt.loadNpmTasks 'grunt-contrib-sass'
   grunt.loadNpmTasks 'grunt-contrib-watch'
