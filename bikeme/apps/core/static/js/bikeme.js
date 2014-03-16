@@ -203,19 +203,25 @@
     map.addControl(new GoHomeControl());
   };
 
+  var updatePosition = function (position) {
+    myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+    map.panTo(myLocation);
+  };
+
   var GoHomeControl = L.Control.extend({
     options: {
       position: 'topright'
     },
     onAdd: function (map) {
       var container = L.DomUtil.create('div', 'leaflet-control-home leaflet-bar');
+      // WISHLIST add system map button even if geolocation is off
       $(container).html(
         '<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>' +
         '<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>'
         )
         .find('a.action-home').on('click', function (e) {
           e.preventDefault();
-          map.panTo(myLocation);
+          navigator.geolocation.getCurrentPosition(updatePosition);
         }).end()
         .find('a.action-all').on('click', function (e) {
           e.preventDefault();
