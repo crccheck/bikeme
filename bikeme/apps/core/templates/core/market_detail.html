@@ -48,7 +48,7 @@
       bounds.push([stand.latitude, stand.longitude]);
       L.marker([stand.latitude, stand.longitude], {
         icon: getIcon(stand),
-        title: stand.name + '\nBikes:' + stand.bikes + '\nDocks:' + stand.docks
+        title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
       }).addTo(map);
     });
 

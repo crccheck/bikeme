@@ -1,13 +1,23 @@
+@import "compass/css3/border-radius"
+
+$empty-color: gainsboro
+$full-color: red
+$background-color: aliceblue
+$foreground-color: orange
+
+
 .filled-marker
-  background: red
-  border: 2px solid blue
+  +border-radius(3px)
+  background: $foreground-color
+  border: 2px solid cornflowerblue
   color: transparent
   height: 14px
   width: 10px
   > *
-    background: white
+    background: $background-color
   .filled-0
-    height: 99%
+    background: $empty-color
+    height: 100%
   .filled-1
     height: 90%
   .filled-2
@@ -27,4 +37,5 @@
   .filled-9
     height: 10%
   .filled-10
-    height: 0%
+    background: $full-color
+    height: 100%
