@@ -59,7 +59,8 @@ class Station(models.Model):
 
 class Snapshot(models.Model):
     STATUS_CHOICES = (
-        ('active', 'active'),
+        ('active', 'Active'),
+        ('outofservice', 'Out of Service'),
         # TODO
     )
     station = models.ForeignKey(Station, related_name='history')

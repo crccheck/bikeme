@@ -166,7 +166,7 @@
     var filled = Math.round(stand.bikes / (stand.bikes + stand.docks) * 10);
     return L.divIcon({
       className: 'filled-marker',
-      html: '<div class="filled-' + filled + '">X</div>',
+      html: '<div class="filled-' + filled + ' ' + stand.status + '">X</div>',
       iconSize: [16, 19],
       iconAnchor: null
     });
