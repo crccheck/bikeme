@@ -194,10 +194,17 @@
     },
     onAdd: function (map) {
       var container = L.DomUtil.create('div', 'leaflet-control-home leaflet-bar');
-      $(container).html('<a class="" href="#" title="Go home"><span class="fa fa-crosshairs"></span></a>')
-        .find('a').on('click', function (e) {
+      $(container).html(
+        '<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>' +
+        '<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>'
+        )
+        .find('a.action-home').on('click', function (e) {
           e.preventDefault();
           map.panTo(myLocation);
+        }).end()
+        .find('a.action-all').on('click', function (e) {
+          e.preventDefault();
+          map.fitBounds(bounds);
         });
       return container;
     }
