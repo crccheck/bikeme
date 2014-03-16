@@ -18,6 +18,12 @@
       width: Math.max(300, $(window).width() >> 1),
       height: 200
     };
+    var plotMargin = {
+      top: 10,
+      left: 24,
+      bottom: 56,
+      right: 10
+    };
 
     var format = d3.time.format('%Y-%m-%dT%H:%M:%SZ');
 
@@ -50,9 +56,12 @@
 
     var svg = d3.select($el[0])
       .append('svg')
-      .attr('width', plotBox.width + 20)
-      .attr('height', plotBox.height + 40)
-      .attr('viewBox', [0, 0, plotBox.width + 20 + 10, plotBox.height + 40].join(' '))
+      .attr('width', plotBox.width + plotMargin.left + plotMargin.right)
+      .attr('height', plotBox.height + plotMargin.top + plotMargin.bottom)
+      .attr('viewBox', [0, 0,
+          plotBox.width + plotMargin.left + plotMargin.right,
+          plotBox.height + plotMargin.top + plotMargin.bottom,
+        ].join(' '))
       .attr('preserveAspectRatio', 'xMinYMin meet');
 
     var plot = svg
@@ -60,7 +69,7 @@
       .attr('class', 'plot')
       .attr('width', plotBox.width)
       .attr('height', plotBox.height)
-      .attr('transform', 'translate(20, 0)');
+      .attr('transform', 'translate(' + plotMargin.left + ', ' + plotMargin.top + ')');
 
     var xScale = d3.time.scale()
       .range([0, plotBox.width])
@@ -84,7 +93,7 @@
 
     svg.append('g')
       .attr('class', 'x axis')
-      .attr('transform', 'translate(20, ' + plotBox.height + ')')
+      .attr('transform', 'translate(' + plotMargin.left + ', ' + (plotBox.height + plotMargin.top) + ')')
       .call(xAxis)
       .selectAll('text')
         .style('text-anchor', 'end')
@@ -94,7 +103,7 @@
 
     svg.append('g')
       .attr('class', 'y axis')
-      .attr('transform', 'translate(20, 0)')
+      .attr('transform', 'translate(' + plotMargin.left + ', ' + plotMargin.top + ')')
       .call(yAxis);
 
     plot.append('path')
