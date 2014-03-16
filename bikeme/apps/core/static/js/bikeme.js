@@ -224,9 +224,14 @@
         $next = $legend.find('.next');
     var next = 10 * 60;  // 10 minutes
     var _update = function () {
-      var diff = (Date.now() - updated_at) / 1000;
+      var diff = (Date.now() - updated_at) / 1000,
+          nextDiff = next - diff;
       $last.text(Math.floor(diff));
-      $next.text(Math.floor(next - diff));
+      $next.text(Math.floor(nextDiff));
+      if (nextDiff < 0 && nextDiff > -1) {
+        // this should work most of the time :/
+        updateMap();
+      }
     };
     _update();
     setInterval(_update, 1000);
