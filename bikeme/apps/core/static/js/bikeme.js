@@ -198,7 +198,8 @@
       marker.on('click', function (e) {
         showStandInfo(stand, e.latlng);
       });
-      markers[stand.url] = marker;
+      var slug = stand.url.match(/([\w\-]+).json/)[1];
+      markers[slug] = marker;
     });
 
     // add an OpenStreetMap tile layer
@@ -216,7 +217,8 @@
       updated_at = d3.time.hour.offset(isoToDate.parse(station_data.updated_at), tzOffset);
       lastUpdate = Date.now() + 15 * 1000;  // lie and set `lastUpdate` to the future
       $.each(station_data.stations, function (idx, stand) {
-        var marker = markers[stand.url];
+        var slug = stand.url.match(/([\w\-]+).json/)[1];
+        var marker = markers[slug];
         marker.setIcon(getIcon(stand));
       });
     });
