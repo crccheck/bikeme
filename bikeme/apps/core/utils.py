@@ -1,5 +1,6 @@
 import logging
 
+from project_runpy import ColorizingStreamHandler
 from dateutil.parser import parse
 from dateutil.tz import gettz
 import requests
@@ -10,6 +11,7 @@ from .models import Market, Station, Snapshot
 URL = 'http://bikeme-api.herokuapp.com/{market}/'
 
 logger = logging.getLogger(__name__)
+logger.addHandler(ColorizingStreamHandler())
 
 
 def setfield(obj, fieldname, value):
@@ -85,14 +87,14 @@ def update_market_divvy(market):
     status_lookup = {
         'In Service': 'available',
     }
-    response = requests.get('divvybikes.com/stations/json/')
+    response = requests.get('http://divvybikes.com/stations/json/')
     data = response.json()
     tz = gettz('America/Chicago')
     scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
     for row in data['stationBeanList']:
         defaults = dict(
             latitude=row['latitude'],
-            longitude=row['latitude'],
+            longitude=row['longitude'],
             street=row['stAddress1'],
             zip=row['postalCode'],
             capacity=row['totalDocks'],
@@ -120,9 +122,11 @@ def update_market_divvy(market):
 
 
 def update_all_markets():
-    for market in Market.objects.all():
+    for market in Market.objects.filter(active=True):
         if market.type == 'bcycle':
             update_market_bcycle(market)
+        elif market.type == 'divvy':
+            update_market_divvy(market)
         else:
             logger.warn(u'Unknown Market Type: {} Market:'
                     .format(market.type, market))
