@@ -82,4 +82,8 @@ def update_market_bcycle(market):
 
 def update_all_markets():
     for market in Market.objects.all():
-        update_market_bcycle(market)
+        if market.type == 'bcycle':
+            update_market_bcycle(market)
+        else:
+            logger.warn(u'Unknown Market Type: {} Market:'
+                    .format(market.type, market))
