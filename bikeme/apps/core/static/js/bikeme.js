@@ -268,6 +268,7 @@
   var topRight = {
     $el: $('<div class="leaflet-control-home leaflet-bar"></div>'),
     myLocation: null,
+    myLocationMarker: null,
     addMyLocationBtn: function (){
       var $btn = $('<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>')
         .on('click', function (e) {
@@ -277,18 +278,21 @@
       this.$el.append($btn);
     },
     initialPositionFound: function (position) {
-      topRight.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-      L.marker(topRight.myLocation).addTo(map);
-      topRight.addMyLocationBtn();
-      if (map.getBounds().contains(topRight.myLocation)) {
+      var self = topRight;
+      self.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+      self.myLocationMarker = L.marker(self.myLocation).addTo(map);
+      self.addMyLocationBtn();
+      if (map.getBounds().contains(self.myLocation)) {
         // only pan if user's location is worth panning to
-        map.panTo(topRight.myLocation);
+        map.panTo(self.myLocation);
         map.setZoom(16);
       }
     },
     panToPosition: function (position) {
-      topRight.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-      map.panTo(topRight.myLocation);
+      var self = topRight;
+      self.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+      self.myLocationMarker.setLatLng(self.myLocation);
+      map.panTo(self.myLocation);
     },
     init: function () {
       var goHomeControl = L.control({position: 'topright'});
