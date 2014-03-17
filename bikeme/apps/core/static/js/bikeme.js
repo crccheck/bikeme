@@ -283,14 +283,14 @@
     map.panTo(myLocation);
   };
 
+  var $gohome = $('<div class="leaflet-control-home leaflet-bar"></div>');
   var GoHomeControl = L.Control.extend({
     options: {
       position: 'topright'
     },
     onAdd: function (map) {
-      var container = L.DomUtil.create('div', 'leaflet-control-home leaflet-bar');
       // WISHLIST add system map button even if geolocation is off
-      $(container).html(
+      $gohome.html(
         '<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>' +
         '<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>'
         )
@@ -302,7 +302,7 @@
           e.preventDefault();
           map.fitBounds(bounds);
         });
-      return container;
+      return $gohome[0];
     }
   });
 
