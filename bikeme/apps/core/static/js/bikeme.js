@@ -140,7 +140,7 @@
   // * MAP POPUP *
   // *************
 
-  var showStandInfo = function (stand, latlng) {
+  var getPopup = function (stand) {
     document.location.hash = stand.url.match(/([\w\-]+).json/)[1];
     var popup = L.popup({
       // keep popup from cutting off chart
@@ -155,14 +155,12 @@
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
-    $.getJSON(stand.url, function (data) {
-      buildChart($paper, data);
-      popup.setContent($paper[0]);
-    });
-    popup
-      .setLatLng(latlng)
-      .setContent($paper[0])
-      .openOn(map);
+    // $.getJSON(stand.url, function (data) {
+    //   buildChart($paper, data);
+    //   popup.setContent($paper[0]);
+    // });
+    popup.setContent($paper[0]);
+    return popup;
   };
 
 
@@ -195,8 +193,12 @@
         icon: getIcon(stand),
         title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
       }).addTo(map);
+      marker.bindPopup(getPopup(stand));
       marker.on('click', function (e) {
-        showStandInfo(stand, e.latlng);
+        console.log('click', this, e)
+      });
+      marker.on('popupopen', function (e) {
+        console.log('test', this, e);
       });
       var slug = stand.url.match(/([\w\-]+).json/)[1];
       markers[slug] = marker;
