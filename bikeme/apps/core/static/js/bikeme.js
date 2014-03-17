@@ -153,17 +153,6 @@
     return $paper;
   };
 
-  var getPopup = function (station) {
-    var popup = L.popup({
-      // keep popup from cutting off chart
-      maxWidth: 10000
-    });
-    var $popup = $('<div/>');
-    $popup.data('station', station);
-    popup.setContent($popup[0]);
-    return popup;
-  };
-
 
   // **************
   // * CREATE MAP *
@@ -188,28 +177,33 @@
       bounds = [];
 
   var createMap = function () {
-    $.each(station_data.stations, function (idx, stand) {
-      bounds.push([stand.latitude, stand.longitude]);
-      var marker = L.marker([stand.latitude, stand.longitude], {
-        icon: getIcon(stand),
-        title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
+    $.each(station_data.stations, function (idx, station) {
+      bounds.push([station.latitude, station.longitude]);
+      var marker = L.marker([station.latitude, station.longitude], {
+        icon: getIcon(station),
+        title: station.name + '\nBikes: ' + station.bikes + '\nDocks: ' + station.docks
       }).addTo(map);
-      marker.bindPopup(getPopup(stand));
-      var slug = stand.url.match(/([\w\-]+).json/)[1];
-      markers[slug] = marker;
-    });
-    map.on('popupopen', function (e) {
-      // hack for on popupopen not working in the loop above
-      var $popup = $(e.popup.getContent());
-      var station = $popup.data('station');
-      var $paper = getPopupContent(station);
-      $popup.empty().append($paper);
-      e.popup.update();  // update popup dimensions
-      document.location.hash = station.url.match(/([\w\-]+).json/)[1];
-      $.getJSON(station.url, function (data) {
-        buildChart($paper, data);
-        e.popup.update();  // update popup dimensions
+      marker.bindPopup(L.popup({
+        // keep popup from cutting off chart
+        maxWidth: 10000
+      }));
+      marker.on('click', function () {
+        // HACK because marker.on('popupopen') does not work
+        var popup = marker.getPopup();
+        if (!popup._isOpen) {
+          // bail
+          return;
+        }
+        var $paper = getPopupContent(station);
+        popup.setContent($paper[0]);
+        $.getJSON(station.url, function (data) {
+          buildChart($paper, data);
+          popup.update();  // update popup dimensions
+        });
+        document.location.hash = station.url.match(/([\w\-]+).json/)[1];
       });
+      var slug = station.url.match(/([\w\-]+).json/)[1];
+      markers[slug] = marker;
     });
 
     // add an OpenStreetMap tile layer
