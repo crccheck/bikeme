@@ -33,6 +33,7 @@ class MarketDetail(DetailView):
         data = super(MarketDetail, self).get_context_data(**kwargs)
         serializer = DjangoJSONEncoder()
         stations = self.object.stations.all().select_related('latest_snapshot')
+        data['stations'] = stations
         json_data = {
             'stations': map(self.station_to_json, stations),
             'updated_at': stations[0].updated_at,  # XXX this may not be the latest

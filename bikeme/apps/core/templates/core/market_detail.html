@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-
 {% block head_title %}{{ object }}{% endblock %}
 
 {% block main %}
-  <h1>{{ object }}</h1>
-  {# TODO #}
-  {# Last Updated: {{ object.updated_at }} #}
+  <h1 class="intro">{{ object }}</h1>
+  <p class="intro">
+    There are {{ stations.count }} {{ object.type }} stations in {{ object }}.
+    Last updated {{ stations.0.updated_at }} UTC.
+  </p>
   <div id="map"></div>
   <script>
     var station_data = {{ station_json|safe }};
