@@ -62,11 +62,17 @@
       .attr('height', plotBox.height)
       .attr('transform', 'translate(' + plotMargin.left + ', ' + plotMargin.top + ')');
 
+    var minValues = [cleanedData.recent[0].date],
+        maxValues = [cleanedData.recent[cleanedData.recent.length - 1].date];
+    if (cleanedData.yesterday.length) {
+      minValues.push(cleanedData.yesterday[0].date);
+      maxValues.push(cleanedData.yesterday[cleanedData.yesterday.length - 1].date);
+    }
     var xScale = d3.time.scale()
       .range([0, plotBox.width])
       .domain([
-        Math.min(cleanedData.recent[0].date, cleanedData.yesterday[0].date),
-        cleanedData.yesterday[cleanedData.yesterday.length - 1].date
+        Math.min.apply(undefined, minValues),
+        Math.max.apply(undefined, maxValues)
       ]);
 
     var yScale = d3.scale.linear()
