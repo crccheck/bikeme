@@ -236,16 +236,19 @@
           nextDiff = next - diff;
       $last.html(Math.floor(diff));
       if (nextDiff < 0) {
-        $next.html('<span style="font-weight: normal;">in progres</span>');
+        var msg = lastUpdate ? 'in progres' : 'oop';
+        $next.html('<span style="font-weight: normal;">' + msg + '</span>');
       } else {
         $next.html(Math.floor(nextDiff));
       }
       var now = Date.now();
-      if (nextDiff < 0 &&
-          // wait at least 5 seconds between updates
-          (now - lastUpdate) > 5000) {
+      // wait at least 5 seconds between updates
+      if (nextDiff < 0 && lastUpdate && (now - lastUpdate) > 5000) {
+        updateMap()
+          .fail(function () {
+            lastUpdate = false;
+          });
         lastUpdate = now;
-        updateMap();
       }
     };
     _update();
