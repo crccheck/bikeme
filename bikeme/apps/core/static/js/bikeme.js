@@ -266,6 +266,15 @@
 
   var myLocation = null;
 
+  var $gohome = $('<div class="leaflet-control-home leaflet-bar"></div>');
+  var addHomeBtn = function (){
+    var $btn = $('<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>')
+      .on('click', function (e) {
+        e.preventDefault();
+        navigator.geolocation.getCurrentPosition(updatePosition);
+      });
+    $gohome.append($btn);
+  };
   var zoomMap = function (position) {
     myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
     if (!map.getBounds().contains(myLocation)) {
@@ -275,7 +284,7 @@
     map.panTo(myLocation);
     map.setZoom(16);
     L.marker(myLocation).addTo(map);
-    map.addControl(new GoHomeControl());
+    addHomeBtn();
   };
 
   var updatePosition = function (position) {
@@ -283,28 +292,21 @@
     map.panTo(myLocation);
   };
 
-  var $gohome = $('<div class="leaflet-control-home leaflet-bar"></div>');
   var GoHomeControl = L.Control.extend({
     options: {
       position: 'topright'
     },
     onAdd: function (map) {
-      // WISHLIST add system map button even if geolocation is off
-      $gohome.html(
-        '<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>' +
-        '<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>'
-        )
-        .find('a.action-home').on('click', function (e) {
-          e.preventDefault();
-          navigator.geolocation.getCurrentPosition(updatePosition);
-        }).end()
-        .find('a.action-all').on('click', function (e) {
+      var $btn = $('<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>')
+        .on('click', function (e) {
           e.preventDefault();
           map.fitBounds(bounds);
         });
+        $gohome.append($btn);
       return $gohome[0];
     }
   });
+  map.addControl(new GoHomeControl());
 
   navigator.geolocation.getCurrentPosition(zoomMap);
 
