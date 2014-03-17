@@ -141,6 +141,7 @@
   // *************
 
   var showStandInfo = function (stand, latlng) {
+    document.location.hash = stand.url.match(/([\w\-]+).json/)[1];
     var popup = L.popup({
       // keep popup from cutting off chart
       maxWidth: 10000
