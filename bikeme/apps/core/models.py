@@ -1,5 +1,8 @@
+import datetime
+
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 
@@ -67,6 +70,20 @@ class Station(models.Model):
             'slug': self.market.slug,
             'station_slug': self.slug,
         })
+
+    def get_score(self, hours=24):
+        # assume all stations in the market have been scraped uniformly
+        score = 0
+        qs = list(self.history
+            .filter(timestamp__gte=timezone.now() - datetime.timedelta(hours=hours))
+            .values_list('bikes', flat=True))
+
+        # should I be using `reduce`?
+        last_count = qs[0]
+        for count in qs[1:]:
+            score += abs(count - last_count)
+            last_count = count
+        return score
 
 
 class Snapshot(models.Model):

@@ -30,6 +30,12 @@ class StationTest(TestCase):
             for x in qs:
                 self.assertTrue(x.latest_snapshot)
 
+    def test_get_score(self):
+        station = StationFactory()
+        self.assertEqual(station.get_score(), 0)
+        SnapshotFactory(station=station)
+        self.assertEqual(station.get_score(), 0)
+
 
 class SnapshotTest(TestCase):
     def test_sandbox(self):
