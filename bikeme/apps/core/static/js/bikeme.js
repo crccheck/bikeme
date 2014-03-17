@@ -140,29 +140,28 @@
   // * MAP POPUP *
   // *************
 
-  var showStandInfo = function (stand, latlng) {
-    document.location.hash = stand.url.match(/([\w\-]+).json/)[1];
-    var popup = L.popup({
-      // keep popup from cutting off chart
-      maxWidth: 10000
-    });
-    var $paper = $('<div><h3>Bike Availability at ' + stand.name + '</h3>' +
-      '<div>Bikes: <i>' + stand.bikes + '</i>' +
-      ' Docks: <i>' + stand.docks + '</i>' +
-      ' Status: <i>' + stand.status + '</i>' +
+  var getPopupContent = function (station) {
+    var $paper = $('<div><h3>Bike Availability at ' + station.name + '</h3>' +
+      '<div>Bikes: <i>' + station.bikes + '</i>' +
+      ' Docks: <i>' + station.docks + '</i>' +
+      ' Status: <i>' + station.status + '</i>' +
       ' Now: <span class="indicator recent">&nbsp;</span>' +
       ' Yesterday: <span class="indicator yesterday">&nbsp;</span>' +
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
-    $.getJSON(stand.url, function (data) {
-      buildChart($paper, data);
-      popup.setContent($paper[0]);
+    return $paper;
+  };
+
+  var getPopup = function (station) {
+    var popup = L.popup({
+      // keep popup from cutting off chart
+      maxWidth: 10000
     });
-    popup
-      .setLatLng(latlng)
-      .setContent($paper[0])
-      .openOn(map);
+    var $popup = $('<div/>');
+    $popup.data('station', station);
+    popup.setContent($popup[0]);
+    return popup;
   };
 
 
@@ -195,11 +194,22 @@
         icon: getIcon(stand),
         title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
       }).addTo(map);
-      marker.on('click', function (e) {
-        showStandInfo(stand, e.latlng);
-      });
+      marker.bindPopup(getPopup(stand));
       var slug = stand.url.match(/([\w\-]+).json/)[1];
       markers[slug] = marker;
+    });
+    map.on('popupopen', function (e) {
+      // hack for on popupopen not working in the loop above
+      var $popup = $(e.popup.getContent());
+      var station = $popup.data('station');
+      var $paper = getPopupContent(station);
+      $popup.empty().append($paper);
+      e.popup.update();  // update popup dimensions
+      document.location.hash = station.url.match(/([\w\-]+).json/)[1];
+      $.getJSON(station.url, function (data) {
+        buildChart($paper, data);
+        e.popup.update();  // update popup dimensions
+      });
     });
 
     // add an OpenStreetMap tile layer
