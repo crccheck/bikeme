@@ -1,6 +1,18 @@
 $recent: dodgerblue
 $yesterday: peru
 
+.indicator
+  +border-radius(3px)
+  border: 2px solid
+  display: inline-block
+  width: 1em
+  &.yesterday
+    border-color: $yesterday
+    background: rgba($yesterday, 0.15)
+  &.recent
+    border-color: $recent
+    background: rgba($recent, 0.15)
+
 .axis
   path, line
     fill: none

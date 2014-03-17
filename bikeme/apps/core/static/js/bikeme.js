@@ -149,6 +149,8 @@
       '<div>Bikes: <i>' + stand.bikes + '</i>' +
       ' Docks: <i>' + stand.docks + '</i>' +
       ' Status: <i>' + stand.status + '</i>' +
+      ' Now: <span class="indicator recent">&nbsp;</span>' +
+      ' Yesterday: <span class="indicator yesterday">&nbsp;</span>' +
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
