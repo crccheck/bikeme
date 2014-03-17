@@ -16,6 +16,9 @@ class Market(models.Model):
     active = models.BooleanField(default=True)
     type = models.CharField(max_length=10, choices=MARKET_CHOICES)
 
+    class Meta:
+        ordering = ('name', )
+
     def __unicode__(self):
         return self.name
 
