@@ -223,7 +223,6 @@
       });
     });
   };
-  createMap();
 
   // **********
   // * LEGEND *
@@ -260,7 +259,6 @@
     setInterval(_update, 1000);
     return $legend[0];
   };
-  legend.addTo(map);
 
 
   // ***************
@@ -308,8 +306,19 @@
       navigator.geolocation.getCurrentPosition(topRight.initialPositionFound);
     }
   };
+
+
+  // INIT
+
+  createMap();
+  legend.addTo(map);
   topRight.init();
 
+  var slug = document.location.hash.substr(1);
+  if (slug && markers[slug]) {
+    var marker = markers[slug];
+    marker.fireEvent('click', {latlng: marker.getLatLng()});
+  }
 
   // ***********
   // * EXPORTS *
