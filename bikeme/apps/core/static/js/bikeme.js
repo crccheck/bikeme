@@ -278,14 +278,13 @@
     },
     initialPositionFound: function (position) {
       topRight.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-      if (!map.getBounds().contains(topRight.myLocation)) {
-        // user's location is not worth panning to
-        return;
-      }
-      map.panTo(topRight.myLocation);
-      map.setZoom(16);
       L.marker(topRight.myLocation).addTo(map);
       topRight.addMyLocationBtn();
+      if (map.getBounds().contains(topRight.myLocation)) {
+        // only pan if user's location is worth panning to
+        map.panTo(topRight.myLocation);
+        map.setZoom(16);
+      }
     },
     panToPosition: function (position) {
       topRight.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
