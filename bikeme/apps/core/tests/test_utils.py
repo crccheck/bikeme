@@ -24,4 +24,5 @@ class TestDivvy(TestCase):
 
     def test_it_works(self):
         update_market_divvy(self.market)
+        self.assertEqual(self.market.stations.count(), 300)
 

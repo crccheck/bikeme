@@ -1,6 +1,7 @@
 import logging
 
 from dateutil.parser import parse
+from dateutil.tz import gettz
 import requests
 
 from .models import Market, Station, Snapshot
@@ -86,7 +87,8 @@ def update_market_divvy(market):
     }
     response = requests.get('divvybikes.com/stations/json/')
     data = response.json()
-    scraped_at = parse(data['executionTime'])
+    tz = gettz('America/Chicago')
+    scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
     for row in data['stationBeanList']:
         defaults = dict(
             latitude=row['latitude'],
