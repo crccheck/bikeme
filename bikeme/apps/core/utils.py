@@ -80,6 +80,13 @@ def update_market_bcycle(market):
     logger.info('Marking as inactive')
 
 
+def update_market_divvy(market):
+    response = requests.get('divvybikes.com/stations/json/')
+    data = response.json()
+    scraped_at = parse(data['executionTime'])
+    print scraped_at
+
+
 def update_all_markets():
     for market in Market.objects.all():
         if market.type == 'bcycle':
