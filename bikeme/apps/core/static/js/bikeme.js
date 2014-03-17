@@ -260,55 +260,54 @@
   };
   legend.addTo(map);
 
+
   // ***************
   // * GEOLOCATION *
   // ***************
 
-  var myLocation = null;
-
-  var $gohome = $('<div class="leaflet-control-home leaflet-bar"></div>');
-  var addHomeBtn = function (){
-    var $btn = $('<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>')
-      .on('click', function (e) {
-        e.preventDefault();
-        navigator.geolocation.getCurrentPosition(updatePosition);
-      });
-    $gohome.append($btn);
-  };
-  var zoomMap = function (position) {
-    myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-    if (!map.getBounds().contains(myLocation)) {
-      // user's location is not worth panning to
-      return;
-    }
-    map.panTo(myLocation);
-    map.setZoom(16);
-    L.marker(myLocation).addTo(map);
-    addHomeBtn();
-  };
-
-  var updatePosition = function (position) {
-    myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-    map.panTo(myLocation);
-  };
-
-  var GoHomeControl = L.Control.extend({
-    options: {
-      position: 'topright'
-    },
-    onAdd: function (map) {
-      var $btn = $('<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>')
+  var topRight = {
+    $el: $('<div class="leaflet-control-home leaflet-bar"></div>'),
+    myLocation: null,
+    addMyLocationBtn: function (){
+      var $btn = $('<a class="action-home" href="#" title="Go home"><span class="fa fa-location-arrow"></span></a>')
         .on('click', function (e) {
           e.preventDefault();
-          map.fitBounds(bounds);
+          navigator.geolocation.getCurrentPosition(topRight.panToPosition);
         });
-        $gohome.append($btn);
-      return $gohome[0];
-    }
-  });
-  map.addControl(new GoHomeControl());
+      this.$el.append($btn);
+    },
+    initialPositionFound: function (position) {
+      topRight.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+      if (!map.getBounds().contains(topRight.myLocation)) {
+        // user's location is not worth panning to
+        return;
+      }
+      map.panTo(topRight.myLocation);
+      map.setZoom(16);
+      L.marker(topRight.myLocation).addTo(map);
+      topRight.addMyLocationBtn();
+    },
+    panToPosition: function (position) {
+      topRight.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+      map.panTo(topRight.myLocation);
+    },
+    init: function () {
+      var goHomeControl = L.control({position: 'topright'});
+      goHomeControl.onAdd = function (map) {
+        var $btn = $('<a class="action-all" href="#" title="View system map"><span class="fa fa-arrows-alt"></span></a>')
+          .on('click', function (e) {
+            e.preventDefault();
+            map.fitBounds(bounds);
+          });
+          topRight.$el.append($btn);
+        return topRight.$el[0];
+      };
+      goHomeControl.addTo(map);
 
-  navigator.geolocation.getCurrentPosition(zoomMap);
+      navigator.geolocation.getCurrentPosition(topRight.initialPositionFound);
+    }
+  };
+  topRight.init();
 
 
   // ***********
