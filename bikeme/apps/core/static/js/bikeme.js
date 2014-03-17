@@ -308,17 +308,32 @@
   };
 
 
+  // *****************
+  // * LOCATION HASH *
+  // *****************
+  var initLocationHash = function () {
+    var slug = document.location.hash.substr(1);
+    if (slug && markers[slug]) {
+      var marker = markers[slug];
+      marker.fireEvent('click', {latlng: marker.getLatLng()});
+    }
+    map.on('popupclose', function (e) {
+      // remove hash, including the `#`
+      history.pushState('', document.title, window.location.pathname);
+    });
+    $(window).on('hashchange', function (e) {
+      // wishlist respect the back button
+    });
+  };
+
+
   // INIT
 
   createMap();
   legend.addTo(map);
   topRight.init();
+  initLocationHash();
 
-  var slug = document.location.hash.substr(1);
-  if (slug && markers[slug]) {
-    var marker = markers[slug];
-    marker.fireEvent('click', {latlng: marker.getLatLng()});
-  }
 
   // ***********
   // * EXPORTS *
