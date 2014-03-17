@@ -74,6 +74,10 @@ def update_market(market):
         )
         station.latest_snapshot = snapshot
         station.save()
+    qs = market.stations.filter(updated_at__lt=scraped_at)
+    if qs.exists():
+        logger.info('Marking as inactive')
+    logger.info('Marking as inactive')
 
 
 def update_all_markets():
