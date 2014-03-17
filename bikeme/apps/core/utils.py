@@ -39,7 +39,7 @@ def update_with_defaults(obj, data):
         return True
 
 
-def update_market(market):
+def update_market_bcycle(market):
     response = requests.get(URL.format(market=market.slug))
     data = response.json()
     scraped_at = parse(data['now'])
@@ -82,4 +82,4 @@ def update_market(market):
 
 def update_all_markets():
     for market in Market.objects.all():
-        update_market(market)
+        update_market_bcycle(market)

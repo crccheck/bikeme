@@ -5,9 +5,16 @@ from django.utils.text import slugify
 
 class Market(models.Model):
     """A market where bikes can be found, usually a city."""
+    MARKET_CHOICES = (
+        ('bcycle', 'B-Cycle'),
+        ('bixi', 'BIXI'),
+        ('citi', 'Citi Bike'),
+        ('divvy', 'Divvy'),
+    )
     name = models.CharField(max_length=30)
     slug = models.SlugField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
+    type = models.CharField(max_length=10, choices=MARKET_CHOICES)
 
     def __unicode__(self):
         return self.name
