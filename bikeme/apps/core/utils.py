@@ -81,10 +81,40 @@ def update_market_bcycle(market):
 
 
 def update_market_divvy(market):
+    status_lookup = {
+        'In Service': 'available',
+    }
     response = requests.get('divvybikes.com/stations/json/')
     data = response.json()
     scraped_at = parse(data['executionTime'])
-    print scraped_at
+    for row in data['stationBeanList']:
+        defaults = dict(
+            latitude=row['latitude'],
+            longitude=row['latitude'],
+            street=row['stAddress1'],
+            zip=row['postalCode'],
+            capacity=row['totalDocks'],
+            updated_at=scraped_at,
+        )
+        station, created = Station.objects.get_or_create(
+            name=row['stationName'],
+            market=market,
+            defaults=defaults,
+        )
+        if not created:
+            update_with_defaults(station, defaults)
+        defaults = dict(
+            bikes=row['availableBikes'],
+            docks=row['availableDocks'],
+            status=status_lookup.get(row['statusValue'], 'outofservice'),
+        )
+        snapshot, created = Snapshot.objects.get_or_create(
+            timestamp=scraped_at,
+            station=station,
+            defaults=defaults,
+        )
+        station.latest_snapshot = snapshot
+        station.save()
 
 
 def update_all_markets():
