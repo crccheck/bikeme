@@ -4,7 +4,7 @@ from bikeme.apps.core.utils import update_all_markets
 
 
 class Command(BaseCommand):
-    help = "My shiny new management command."
+    help = 'Scrape all markets. Specify slugs to restrict to those markets.'
 
     def handle(self, *args, **options):
-        update_all_markets()
+        update_all_markets(*args)

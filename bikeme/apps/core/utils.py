@@ -121,8 +121,12 @@ def update_market_divvy(market):
         station.save()
 
 
-def update_all_markets():
-    for market in Market.objects.filter(active=True):
+def update_all_markets(*market_slugs):
+    if market_slugs:
+        queryset = Market.objects.filter(slug__in=market_slugs)
+    else:
+        queryset = Market.objects.filter(active=True)
+    for market in queryset:
         if market.type == 'bcycle':
             update_market_bcycle(market)
         elif market.type == 'divvy':
