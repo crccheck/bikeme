@@ -1,1 +1,1 @@
-web: gunicorn bikeme.wsgi
+web: gunicorn bikeme.wsgi -w 3
