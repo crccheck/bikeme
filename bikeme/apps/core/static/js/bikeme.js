@@ -234,16 +234,17 @@
     });
   };
 
-  // **********
-  // * LEGEND *
-  // **********
 
-  var legend = L.control({position: 'bottomleft'}),
-      $legend = $('<div class="legend">Last Update: <span class="last"></span>s' +
+  // ***************
+  // * AUTO UPDATE *
+  // ***************
+
+  var autoUpdateControl = L.control({position: 'bottomleft'}),
+      $autoUpdateControl = $('<div class="autoupdate">Last Update: <span class="last"></span>s' +
         ' Next Update: <span class="next"></span>s</div>');
-  legend.onAdd = function () {
-    var $last = $legend.find('.last'),
-        $next = $legend.find('.next');
+  autoUpdateControl.onAdd = function () {
+    var $last = $autoUpdateControl.find('.last'),
+        $next = $autoUpdateControl.find('.next');
     var next = 10 * 60;  // 10 minutes
     var _update = function () {
       var diff = (Date.now() - updated_at) / 1000,
@@ -267,7 +268,7 @@
     };
     _update();
     setInterval(_update, 1000);
-    return $legend[0];
+    return $autoUpdateControl[0];
   };
 
 
@@ -359,7 +360,7 @@
   // INIT
 
   createMap();
-  legend.addTo(map);
+  autoUpdateControl.addTo(map);
   topRight.init();
   initLocationHash();
 
