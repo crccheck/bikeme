@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+
 {% block head_title %}{{ object }}{% endblock %}
 
 {% block main %}
@@ -11,4 +13,8 @@
   <script>
     var station_data = {{ station_json|safe }};
   </script>
+{% endblock %}
+
+{% block extra_script %}{{ block.super }}
+  <script src={% static 'js/bikeme.js' %}></script>
 {% endblock %}

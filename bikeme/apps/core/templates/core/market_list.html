@@ -1,9 +1,14 @@
-<p>
-  {% for object in object_list %}
-    <a href="{{ object.get_absolute_url }}">{{ object }}</a>
-  {% endfor %}
-</p>
+{% extends "base.html" %}
+{% block head_title %}Home{% endblock %}
 
-<p>
-  <small>Some data from <a href="http://www.citybik.es/">CityBikes</a></small>
-</p>
+{% block main %}
+  <p>
+    {% for object in object_list %}
+      <a href="{{ object.get_absolute_url }}">{{ object }}</a>
+    {% endfor %}
+  </p>
+
+  <p>
+    <small>Some data from <a href="http://www.citybik.es/">CityBikes</a></small>
+  </p>
+{% endblock %}
