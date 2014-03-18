@@ -147,9 +147,9 @@
       maxWidth: 10000
     });
     var $paper = $('<div><h3>Bike Availability at ' + stand.name + '</h3>' +
-      '<div>Bikes: <i>' + stand.bikes + '</i>' +
-      ' Docks: <i>' + stand.docks + '</i>' +
-      ' Status: <i>' + stand.status + '</i>' +
+      '<div>Bikes: <i class="indicator bikes">' + stand.bikes + '</i>' +
+      ' Docks: <i class="indicator docks">' + stand.docks + '</i>' +
+      ' Status: <i class="indicator status">' + stand.status + '</i>' +
       ' Now: <span class="indicator recent">&nbsp;</span>' +
       ' Yesterday: <span class="indicator yesterday">&nbsp;</span>' +
       '</div>' +
