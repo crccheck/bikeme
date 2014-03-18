@@ -1,4 +1,4 @@
-/* global $, L, d3: false */
+/* global $, L, d3, _: false */
 /* global station_data: true */
 (function () {
   'use strict';
@@ -184,6 +184,7 @@
 
   var createMap = function () {
     $.each(station_data.stations, function (idx, station) {
+      var slug = station.url.match(/([\w\-]+).json/)[1];
       bounds.push([station.latitude, station.longitude]);
       var marker = L.marker([station.latitude, station.longitude], {
         icon: getIcon(station),
@@ -206,9 +207,8 @@
           buildChart($paper, data);
           popup.update();  // update popup dimensions
         });
-        document.location.hash = station.url.match(/([\w\-]+).json/)[1];
+        state.push(slug);
       });
-      var slug = station.url.match(/([\w\-]+).json/)[1];
       markers[slug] = marker;
     });
 
@@ -325,18 +325,33 @@
   // *****************
   // * LOCATION HASH *
   // *****************
+  var state = {
+    _state: document.location.hash.substr(1),
+    push: _.debounce(function (newState) {
+      state._state = newState;
+      if (newState === '') {
+        // remove hash, including the `#`
+        history.pushState('', document.title, window.location.pathname);
+      } else {
+        document.location.hash = newState;
+      }
+    }, 200)
+  };
   var initLocationHash = function () {
     var slug = document.location.hash.substr(1);
     if (slug && markers[slug]) {
-      var marker = markers[slug];
-      marker.fireEvent('click', {latlng: marker.getLatLng()});
+      markers[slug].fireEvent('click');
     }
-    map.on('popupclose', function (e) {
-      // remove hash, including the `#`
-      history.pushState('', document.title, window.location.pathname);
+    map.on('popupclose', function () {
+      state.push('');
     });
-    $(window).on('hashchange', function (e) {
-      // wishlist respect the back button
+    $(window).on('hashchange', function () {
+      var slug = document.location.hash.substr(1);
+      if (slug === '') {
+        map.closePopup();
+      } else if (slug !== state._state) {
+        markers[slug].fireEvent('click');
+      }
     });
   };
 
@@ -353,6 +368,7 @@
   // * EXPORTS *
   // ***********
 
+  window.state = state;
   window.map = map;
   window.markers = markers;
   window.updateMap = updateMap;
