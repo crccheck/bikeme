@@ -44,6 +44,11 @@
     };
 
     $el.find('.loading').remove();
+    // update status since `updateMaps` can't access the popup content
+    var latestData = data.recent[data.recent.length - 1];
+    $el.find('.status-bikes').html(latestData[2]);
+    $el.find('.status-docks').html(latestData[3]);
+    $el.find('.status-status').html(latestData[1]);
 
     var svg = d3.select($el[0])
       .append('svg')
