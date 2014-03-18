@@ -29,17 +29,18 @@ h3
 #map
   height: 100vh
 
-.filled-marker
+.marker-inner
   +border-radius(3px)
   +box-sizing(border-box)
   background: $foreground-color
   border: 3px solid firebrick
   color: transparent
   font-size: 1px
-  > *
+  height: 100%
+  &.outofservice
+    background: gray
+  > span
     background: $background-color
-  > .outofservice
-    background: gray !important
   .filled-0
     +striped-bg($empty-color, white)
     height: 100%
@@ -66,6 +67,7 @@ h3
     height: 100%
 
 .legend
+  +border-radius(0.5em)
   background: rgba(white, 0.8)
   font-size: 0.8em
   padding: 0.3em 0.5em

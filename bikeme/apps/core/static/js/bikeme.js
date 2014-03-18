@@ -170,12 +170,13 @@
   // * CREATE MAP *
   // **************
 
-  var getIcon = function (stand) {
+  var getIcon = function (station) {
     // http://leafletjs.com/reference.html#divicon
-    var filled = Math.round(stand.bikes / (stand.bikes + stand.docks) * 10);
+    var filled = Math.round(station.bikes / (station.bikes + station.docks) * 10);
     return L.divIcon({
       className: 'filled-marker',
-      html: '<div class="filled-' + filled + ' ' + stand.status + '">X</div>',
+      html: '<div class="marker-inner ' + station.status + '">' +
+        '<span class="filled-' + filled + '">X</span></div>',
       iconSize: [16, 19],
       iconAnchor: null
     });
