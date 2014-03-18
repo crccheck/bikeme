@@ -1,8 +1,11 @@
+from __future__ import division
+
 import logging
 
 from project_runpy import ColorizingStreamHandler
 from dateutil.parser import parse
 from dateutil.tz import gettz
+from django.utils import timezone
 import requests
 
 from .models import Market, Station, Snapshot
@@ -121,6 +124,39 @@ def update_market_divvy(market):
         station.save()
 
 
+def update_market_citi(market):
+    """Based on citybik.es api."""
+    response = requests.get('http://api.citybik.es/citi-bike-nyc.json')  # XXX
+    data = response.json()
+    for row in data:
+        capacity = row['bikes'] + row['free']
+        scraped_at = parse(row['timestamp'])
+        defaults = dict(
+            latitude=row['lat'] / 1000000,
+            longitude=row['lng'] / 1000000,
+            capacity=capacity,
+            updated_at=scraped_at,
+        )
+        station, created = Station.objects.get_or_create(
+            name=row['name'],
+            market=market,
+            defaults=defaults,
+        )
+        if not created:
+            update_with_defaults(station, defaults)
+        defaults = dict(
+            bikes=row['bikes'],
+            docks=row['free'],
+        )
+        snapshot, created = Snapshot.objects.get_or_create(
+            timestamp=scraped_at,
+            station=station,
+            defaults=defaults,
+        )
+        station.latest_snapshot = snapshot
+        station.save()
+
+
 def update_all_markets(*market_slugs):
     if market_slugs:
         queryset = Market.objects.filter(slug__in=market_slugs)
@@ -131,6 +167,8 @@ def update_all_markets(*market_slugs):
             update_market_bcycle(market)
         elif market.type == 'divvy':
             update_market_divvy(market)
+        elif market.type == 'citi':
+            update_market_citi(market)
         else:
             logger.warn(u'Unknown Market Type: {} Market:'
                     .format(market.type, market))
