@@ -129,7 +129,8 @@ def update_market_citi(market):
     data = response.json()
     for row in data:
         capacity = row['bikes'] + row['free']
-        scraped_at = parse(row['timestamp'])
+        timestamp = row['timestamp'].rsplit('.', 2)[0] + 'Z'  # round down
+        scraped_at = parse(timestamp)
         defaults = dict(
             latitude=row['lat'] / 1000000,
             longitude=row['lng'] / 1000000,
