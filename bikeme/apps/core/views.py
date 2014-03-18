@@ -32,7 +32,7 @@ class MarketDetail(DetailView):
     def get_context_data(self, **kwargs):
         data = super(MarketDetail, self).get_context_data(**kwargs)
         serializer = DjangoJSONEncoder()
-        stations = (self.object.stations.all()
+        stations = (self.object.stations.filter(active=True)
             .order_by('-latest_snapshot__timestamp')
             .select_related('latest_snapshot')
         )

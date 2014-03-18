@@ -9,6 +9,7 @@ admin.site.register(models.Market)
 class StationAdmin(admin.ModelAdmin):
     list_display = ('name', 'market', 'capacity', 'active', )
     list_filter = ('market', 'active', )
+    search_fields = ('name', )
 admin.site.register(models.Station, StationAdmin)
 
 
