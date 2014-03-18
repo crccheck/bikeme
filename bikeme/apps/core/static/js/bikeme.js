@@ -146,7 +146,7 @@
   // *************
 
   var getPopupContent = function (station) {
-    var $paper = $('<div><h3>Bike Availability at ' + station.name + '</h3>' +
+    var $paper = $('<div><h3>' + station.name + '</h3>' +
       '<div>Bikes: <i class="status-bikes">' + station.bikes + '</i>' +
       ' Docks: <i class="status-docks">' + station.docks + '</i>' +
       ' Status: <i class="status-status">' + station.status + '</i>' +
