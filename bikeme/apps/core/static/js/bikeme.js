@@ -140,29 +140,17 @@
   // * MAP POPUP *
   // *************
 
-  var showStandInfo = function (stand, latlng) {
-    document.location.hash = stand.url.match(/([\w\-]+).json/)[1];
-    var popup = L.popup({
-      // keep popup from cutting off chart
-      maxWidth: 10000
-    });
-    var $paper = $('<div><h3>Bike Availability at ' + stand.name + '</h3>' +
-      '<div>Bikes: <i class="indicator bikes">' + stand.bikes + '</i>' +
-      ' Docks: <i class="indicator docks">' + stand.docks + '</i>' +
-      ' Status: <i class="indicator status">' + stand.status + '</i>' +
+  var getPopupContent = function (station) {
+    var $paper = $('<div><h3>Bike Availability at ' + station.name + '</h3>' +
+      '<div>Bikes: <i class="status-bikes">' + station.bikes + '</i>' +
+      ' Docks: <i class="status-docks">' + station.docks + '</i>' +
+      ' Status: <i class="status-status">' + station.status + '</i>' +
       ' Now: <span class="indicator recent">&nbsp;</span>' +
       ' Yesterday: <span class="indicator yesterday">&nbsp;</span>' +
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
-    $.getJSON(stand.url, function (data) {
-      buildChart($paper, data);
-      popup.setContent($paper[0]);
-    });
-    popup
-      .setLatLng(latlng)
-      .setContent($paper[0])
-      .openOn(map);
+    return $paper;
   };
 
 
@@ -190,16 +178,32 @@
       bounds = [];
 
   var createMap = function () {
-    $.each(station_data.stations, function (idx, stand) {
-      bounds.push([stand.latitude, stand.longitude]);
-      var marker = L.marker([stand.latitude, stand.longitude], {
-        icon: getIcon(stand),
-        title: stand.name + '\nBikes: ' + stand.bikes + '\nDocks: ' + stand.docks
+    $.each(station_data.stations, function (idx, station) {
+      bounds.push([station.latitude, station.longitude]);
+      var marker = L.marker([station.latitude, station.longitude], {
+        icon: getIcon(station),
+        title: station.name + '\nBikes: ' + station.bikes + '\nDocks: ' + station.docks
       }).addTo(map);
-      marker.on('click', function (e) {
-        showStandInfo(stand, e.latlng);
+      marker.bindPopup(L.popup({
+        // keep popup from cutting off chart
+        maxWidth: 10000
+      }));
+      marker.on('click', function () {
+        // HACK because marker.on('popupopen') does not work
+        var popup = marker.getPopup();
+        if (!popup._isOpen) {
+          // bail
+          return;
+        }
+        var $paper = getPopupContent(station);
+        popup.setContent($paper[0]);
+        $.getJSON(station.url, function (data) {
+          buildChart($paper, data);
+          popup.update();  // update popup dimensions
+        });
+        document.location.hash = station.url.match(/([\w\-]+).json/)[1];
       });
-      var slug = stand.url.match(/([\w\-]+).json/)[1];
+      var slug = station.url.match(/([\w\-]+).json/)[1];
       markers[slug] = marker;
     });
 
