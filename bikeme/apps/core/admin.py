@@ -15,6 +15,4 @@ admin.site.register(models.Station, StationAdmin)
 class SnapshotAdmin(admin.ModelAdmin):
     date_heirarchy = 'timestamp'
     list_display = ('station', 'bikes', 'docks', 'timestamp')
-    # WISHLIST select_related the list_filter queryset
-    list_filter = ('station', )
 admin.site.register(models.Snapshot, SnapshotAdmin)
