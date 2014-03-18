@@ -79,7 +79,10 @@ class Station(models.Model):
             .values_list('bikes', flat=True))
 
         # should I be using `reduce`?
-        last_count = qs[0]
+        try:
+            last_count = qs[0]
+        except IndexError:
+            return score
         for count in qs[1:]:
             score += abs(count - last_count)
             last_count = count
