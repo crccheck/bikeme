@@ -1,10 +1,43 @@
 $recent: dodgerblue
 $yesterday: peru
 
+.leaflet-popup-content-wrapper
+  // override default
+  padding: 0
+
+.leaflet-popup-content
+  // override default
+  margin: 0
+  h3
+    +border-radius(12px 12px 0 0)
+    background: #333
+    border-bottom: 1px solid #ccc
+    color: #eee
+    font-size: 1em
+    margin: 0 0 0.1em
+    padding: 5px 8px 3px
+    text-align: center
+  dl
+    margin: 0 7px
+  dt, dd
+    display: inline
+  dt
+    color: #666
+    margin-right: 0.3em
+    &:after
+      content: ':'
+  dd
+    font-weight: bold
+    margin: 0 0.3em 0 0  // override default
+
+
+
 .indicator
   +border-radius(3px)
   border: 2px solid
   display: inline-block
+  font-size: 0.9em
+  font-weight: normal
   padding: 0 0.1em
   &.yesterday
     border-color: $yesterday

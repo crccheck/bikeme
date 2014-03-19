@@ -20,9 +20,9 @@
     };
     var plotMargin = {
       top: 8,
-      left: 24,
+      left: 30,
       bottom: 42,
-      right: 7
+      right: 11
     };
 
     var cleaner = function (days) {
@@ -147,11 +147,13 @@
 
   var getPopupContent = function (station) {
     var $paper = $('<div><h3>' + station.name + '</h3>' +
-      '<div>Bikes: <i class="status-bikes">' + station.bikes + '</i>' +
-      ' Docks: <i class="status-docks">' + station.docks + '</i>' +
-      ' Status: <i class="status-status">' + station.status + '</i>' +
-      ' Legend: <span class="indicator recent">Now</span>' +
+      '<dl>' +
+      '<dt>Bikes</dt><dd class="status-bikes">' + station.bikes + '</dd>' +
+      '<dt>Docks</dt><dd class="status-docks">' + station.docks + '</dd>' +
+      '<dt>Status</dt><dd class="status-status">' + station.status + '</dd>' +
+      '<dt>Bike Count</dt><dd><span class="indicator recent">Today</span>' +
       ' <span class="indicator yesterday">Yesterday</span>' +
+      '</dd>' +
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
