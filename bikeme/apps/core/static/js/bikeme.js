@@ -166,6 +166,11 @@
   var getIcon = function (station) {
     // http://leafletjs.com/reference.html#divicon
     var filled = Math.round(station.bikes / (station.bikes + station.docks) * 10);
+    if (filled === 0 && station.bikes) {
+      filled = 1;
+    } else if (filled === 10 && station.docks) {
+      filled = 9;
+    }
     return L.divIcon({
       className: 'filled-marker',
       html: '<div class="marker-inner ' + station.status + '">' +
