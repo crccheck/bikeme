@@ -337,7 +337,7 @@
       state._state = newState;
       if (newState === '') {
         // remove hash, including the `#`
-        history.pushState('', document.title, window.location.pathname);
+        history.replaceState('', document.title, window.location.pathname);
       } else {
         document.location.hash = newState;
       }
