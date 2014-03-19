@@ -5,13 +5,15 @@ $yesterday: peru
   +border-radius(3px)
   border: 2px solid
   display: inline-block
-  width: 1em
+  padding: 0 0.1em
   &.yesterday
     border-color: $yesterday
     background: rgba($yesterday, 0.15)
+    color: darken($yesterday, 30%)
   &.recent
     border-color: $recent
     background: rgba($recent, 0.15)
+    color: darken($recent, 30%)
 
 .axis
   path, line

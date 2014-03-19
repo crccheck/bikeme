@@ -150,8 +150,8 @@
       '<div>Bikes: <i class="status-bikes">' + station.bikes + '</i>' +
       ' Docks: <i class="status-docks">' + station.docks + '</i>' +
       ' Status: <i class="status-status">' + station.status + '</i>' +
-      ' Now: <span class="indicator recent">&nbsp;</span>' +
-      ' Yesterday: <span class="indicator yesterday">&nbsp;</span>' +
+      ' Legend: <span class="indicator recent">Now</span>' +
+      ' <span class="indicator yesterday">Yesterday</span>' +
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
