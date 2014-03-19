@@ -114,6 +114,14 @@ LOGGING = {
     },
 }
 
+
+if env.get('SENTRY_DSN'):
+    RAVEN_CONFIG = {
+        'dsn': env.get('SENTRY_DSN'),
+    }
+    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
+
+
 if ENVIRONMENT == 'test':
     DEBUG = False
     DATABASES['default'] = dj_database_url.parse('sqlite:///:memory:')
