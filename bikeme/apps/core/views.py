@@ -3,16 +3,33 @@ import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.cache import patch_cache_control
 from django.views.generic import ListView, DetailView
 
 from . import models
 
 
-class Landing(ListView):
+class CacheGetMixin(object):
+    """I really don't want to use the `cache_control` decorator."""
+    cache_control = {}
+
+    def get(self, request, **kwargs):
+        response = super(CacheGetMixin, self).get(request, **kwargs)
+        patch_cache_control(response, **self.cache_control)
+        return response
+
+
+class Landing(CacheGetMixin, ListView):
+    cache_control = {
+        'max_age': 60 * 60,  # 1 hour
+    }
     model = models.Market
 
 
-class MarketDetail(DetailView):
+class MarketDetail(CacheGetMixin, DetailView):
+    cache_control = {
+        'max_age': 10 * 60,  # 10 minutes
+    }
     model = models.Market
 
     @staticmethod
