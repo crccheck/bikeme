@@ -300,7 +300,7 @@
       self.myLocation = L.latLng(position.coords.latitude, position.coords.longitude);
       self.myLocationMarker = L.marker(self.myLocation).addTo(map);
       self.addMyLocationBtn();
-      if (map.getBounds().contains(self.myLocation)) {
+      if (document.location.hash.length < 1 && map.getBounds().contains(self.myLocation)) {
         // only pan if user's location is worth panning to
         map.panTo(self.myLocation);
         map.setZoom(16);
