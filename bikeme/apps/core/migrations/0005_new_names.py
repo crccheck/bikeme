@@ -12,7 +12,7 @@ class Migration(DataMigration):
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
         for station in orm.Station.objects.filter(
-                market__slug__in=['nyc', 'chicago'], name__contains=' - '):
+                market__slug='nyc', name__contains=' - '):
             try:
                 new_name = station.name.split(' - ', 2)[1]
             except IndexError:
