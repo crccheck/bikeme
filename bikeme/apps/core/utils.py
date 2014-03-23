@@ -183,7 +183,7 @@ def update_all_markets(*market_slugs):
     for market in queryset:
         if market.type == 'bcycle':
             update_market_bcycle(market)
-        elif market.type == 'alta' or market.slug == 'divvy' or market.slug == 'nyc':
+        elif market.type == 'alta':
             update_market_alta(market)
         else:
             logger.warn(u'Unknown Market Type: {} Market:'

@@ -12,8 +12,6 @@ class Market(models.Model):
         ('alta', 'Alta'),
         ('bcycle', 'B-Cycle'),
         ('bixi', 'BIXI'),
-        ('citi', 'Citi Bike'),
-        ('divvy', 'Divvy'),  # deprecated
     )
     name = models.CharField(max_length=30)
     slug = models.SlugField(max_length=30, unique=True)
