@@ -1,5 +1,6 @@
 $recent: dodgerblue
 $yesterday: peru
+$lastweek: chartreuse
 
 .leaflet-popup-content-wrapper
   // override default
@@ -34,17 +35,24 @@ $yesterday: peru
 
 .indicator
   +border-radius(3px)
-  border: 2px solid
+  border-style: solid
   display: inline-block
   font-size: 0.9em
   font-weight: normal
   padding: 0 0.1em
+  &.lastweek
+    border-color: $lastweek
+    border-width: 1px
+    background: rgba($lastweek, 0.10)
+    color: darken($lastweek, 30%)
   &.yesterday
     border-color: $yesterday
+    border-width: 1.5px
     background: rgba($yesterday, 0.15)
     color: darken($yesterday, 30%)
   &.recent
     border-color: $recent
+    border-width: 2px
     background: rgba($recent, 0.15)
     color: darken($recent, 30%)
 
@@ -59,14 +67,19 @@ $yesterday: peru
 
 .line
   fill: none
-  &.recent
-    stroke: $recent
-    stroke-width: 2px
+  &.lastweek
+    stroke: $lastweek
+    stroke-width: 1px
   &.yesterday
     stroke: $yesterday
     stroke-width: 1.5px
+  &.recent
+    stroke: $recent
+    stroke-width: 2px
 
 .area
+  &.lastweek
+    fill: rgba($lastweek, 0.10)
   &.yesterday
     fill: rgba($yesterday, 0.15)
   &.recent

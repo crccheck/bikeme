@@ -73,6 +73,10 @@
       minValues.push(cleanedData.yesterday[0].date);
       maxValues.push(cleanedData.yesterday[cleanedData.yesterday.length - 1].date);
     }
+    // if (cleanedData.lastweek.length) {
+    //   minValues.push(cleanedData.lastweek[0].date);
+    //   maxValues.push(cleanedData.lastweek[cleanedData.lastweek.length - 1].date);
+    // }
     var xScale = d3.time.scale()
       .range([0, plotBox.width])
       .domain([
@@ -119,7 +123,7 @@
       .attr('transform', 'translate(' + plotMargin.left + ', ' + plotMargin.top + ')')
       .call(yAxis);
 
-    $.each(['yesterday', 'recent'], function (idx, dataset) {
+    $.each(['lastweek', 'yesterday', 'recent'], function areaLine(idx, dataset) {
       plot.append('path')
         .datum(cleanedData[dataset])
         .attr('class', 'area ' + dataset)
@@ -153,6 +157,7 @@
       '<dt>Status</dt><dd class="status-status">' + station.status + '</dd>' +
       '<dt>Bike Count</dt><dd><span class="indicator recent">Today</span>' +
       ' <span class="indicator yesterday">Yesterday</span>' +
+      ' <span class="indicator lastweek">Last Week</span>' +
       '</dd>' +
       '</div>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
