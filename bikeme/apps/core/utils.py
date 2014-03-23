@@ -5,7 +5,6 @@ import logging
 from project_runpy import ColorizingStreamHandler
 from dateutil.parser import parse
 from dateutil.tz import gettz
-from django.utils import timezone
 import requests
 
 from .models import Market, Station, Snapshot
@@ -95,6 +94,10 @@ def update_market_alta(market):
             'url': 'http://divvybikes.com/stations/json/',
             'timezone': 'America/Chicago',
         },
+        'nyc': {
+            'url': 'http://citibikenyc.com/stations/json/',
+            'timezone': 'America/New_York',
+        },
     }
     status_lookup = {
         'In Service': 'available',
@@ -178,10 +181,8 @@ def update_all_markets(*market_slugs):
     for market in queryset:
         if market.type == 'bcycle':
             update_market_bcycle(market)
-        elif market.type == 'alta' or market.type == 'divvy':
+        elif market.type == 'alta' or market.slug == 'divvy' or market.slug == 'nyc':
             update_market_alta(market)
-        elif market.type == 'citi':
-            update_market_citi(market)
         else:
             logger.warn(u'Unknown Market Type: {} Market:'
                     .format(market.type, market))
