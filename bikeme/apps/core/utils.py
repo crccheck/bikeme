@@ -136,11 +136,13 @@ def update_market_alta(market):
         )
         station.latest_snapshot = snapshot
         station.save()
+    # WISHLIST auto mark stations as inactive
 
 
-def update_market_citi(market):
+def update_market_citybikes(market):
     """Based on citybik.es api."""
-    response = requests.get('http://api.citybik.es/citi-bike-nyc.json')  # XXX
+    # TODO
+    response = requests.get('http://api.citybik.es/{}.json')
     data = response.json()
     for row in data:
         capacity = row['bikes'] + row['free']
