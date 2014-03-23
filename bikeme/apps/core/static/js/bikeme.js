@@ -32,6 +32,7 @@
             d3.time.hour.offset(isoToDate.parse(d[0]), tzOffset),
             days
           ),
+          status: d[1],
           bikes: d[2],
           docks: d[3]
         };
@@ -45,10 +46,10 @@
 
     $el.find('.loading').remove();
     // update status since `updateMaps` can't access the popup content
-    var latestData = data.recent[data.recent.length - 1];
-    $el.find('.status-bikes').html(latestData[2]);
-    $el.find('.status-docks').html(latestData[3]);
-    $el.find('.status-status').html(latestData[1]);
+    var latestData = cleanedData.recent[cleanedData.recent.length - 1];
+    $el.find('.status-bikes').html(latestData.bike);
+    $el.find('.status-docks').html(latestData.docks);
+    $el.find('.status-status').html(latestData.status);
 
     var svg = d3.select($el[0])
       .append('svg')
@@ -68,7 +69,7 @@
       .attr('transform', 'translate(' + plotMargin.left + ', ' + plotMargin.top + ')');
 
     var minValues = [cleanedData.recent[0].date],
-        maxValues = [cleanedData.recent[cleanedData.recent.length - 1].date];
+        maxValues = [latestData.date];
     if (cleanedData.yesterday.length) {
       minValues.push(cleanedData.yesterday[0].date);
       maxValues.push(cleanedData.yesterday[cleanedData.yesterday.length - 1].date);
