@@ -169,7 +169,7 @@
       ' <span class="indicator yesterday">Yesterday</span>' +
       ' <span class="indicator lastweek">Last Week</span>' +
       '</dd>' +
-      '</div>' +
+      '</dl>' +
       '<div class="loading">Loading... <i class="fa fa-spinner fa-spin"></i></div>' +
       '</div>');
     return $paper;
