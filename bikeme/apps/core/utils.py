@@ -85,7 +85,12 @@ def update_market_bcycle(market):
 
 
 def update_market_alta(market):
+    # http://www.altabicycleshare.com/locations
     lookup = {
+        'chattanooga': {
+            'url': 'http://bikechattanooga.com/stations/json/',
+            'timezone': 'America/New_York',
+        },
         'chicago': {
             'url': 'http://divvybikes.com/stations/json/',
             'timezone': 'America/Chicago',
@@ -93,6 +98,7 @@ def update_market_alta(market):
     }
     status_lookup = {
         'In Service': 'available',
+        'Not In Service': 'outofservice',
     }
     market_data = lookup[market.slug]
     response = requests.get(market_data['url'])
