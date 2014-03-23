@@ -57,6 +57,7 @@ def update_market_bcycle(market):
             zip=zip_code,
             state=state,
             capacity=capacity,
+            active=True,
             updated_at=scraped_at,
         )
         station, created = Station.objects.get_or_create(
@@ -116,6 +117,7 @@ def update_market_alta(market):
             street=row['stAddress1'],
             zip=row['postalCode'][:5],
             capacity=row['totalDocks'],
+            active=True,
             updated_at=scraped_at,
         )
         station, created = Station.objects.get_or_create(
