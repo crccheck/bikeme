@@ -192,7 +192,7 @@
       className: 'filled-marker',
       html: '<div class="marker-inner ' + station.status + '">' +
         '<span class="filled-' + filled + '">X</span></div>',
-      iconSize: [24, 24],
+      iconSize: [26, 26],
       iconAnchor: null
     });
   };
