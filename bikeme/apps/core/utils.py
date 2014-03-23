@@ -113,7 +113,7 @@ def update_market_alta(market):
             latitude=row['latitude'],
             longitude=row['longitude'],
             street=row['stAddress1'],
-            zip=row['postalCode'],
+            zip=row['postalCode'][:5],
             capacity=row['totalDocks'],
             updated_at=scraped_at,
         )
