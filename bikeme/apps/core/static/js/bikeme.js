@@ -32,7 +32,7 @@
             d3.time.hour.offset(isoToDate.parse(d[0]), tzOffset),
             days
           ),
-          status: d[1],
+          // status: d[1],
           bikes: d[2],
           docks: d[3]
         };
@@ -49,7 +49,7 @@
     var latestData = cleanedData.recent[cleanedData.recent.length - 1];
     $el.find('.status-bikes').html(latestData.bike);
     $el.find('.status-docks').html(latestData.docks);
-    $el.find('.status-status').html(latestData.status);
+    // $el.find('.status-status').html(latestData.status);
 
     var svg = d3.select($el[0])
       .append('svg')
@@ -157,11 +157,14 @@
   // *************
 
   var getPopupContent = function (station) {
-    var $paper = $('<div><h3>' + station.name + '</h3>' +
+    var title = station.name;
+    if (station.status !== 'active') {
+      station.name += ' (' + station.status + ')' ;
+    }
+    var $paper = $('<div><h3>' + title + '</h3>' +
       '<dl>' +
       '<dt>Bikes</dt><dd class="status-bikes">' + station.bikes + '</dd>' +
       '<dt>Docks</dt><dd class="status-docks">' + station.docks + '</dd>' +
-      '<dt>Status</dt><dd class="status-status">' + station.status + '</dd>' +
       '<dt>Bike Count</dt><dd><span class="indicator recent">Today</span>' +
       ' <span class="indicator yesterday">Yesterday</span>' +
       ' <span class="indicator lastweek">Last Week</span>' +
