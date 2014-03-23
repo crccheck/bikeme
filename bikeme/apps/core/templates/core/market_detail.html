@@ -4,11 +4,23 @@
 {% block head_title %}{{ object }}{% endblock %}
 
 {% block main %}
-  <h1 class="intro">{{ object }}</h1>
-  <p class="intro">
-    There are {{ stations.count }} {{ object.type }} stations in {{ object }}.
-    Last updated {{ stations.0.updated_at }} UTC.
-  </p>
+  <section class="intro">
+    <h1>{{ object }}</h1>
+    <p>
+      There are {{ stations.count }} {{ object.type }} stations in {{ object }}:
+    </p>
+    <ul>
+      {% for station in stations %}
+        <li>
+          {{ station.name }} <em>Capacity: ({{ station.capacity }})</em>
+        </li>
+      {% endfor %}
+    </ul>
+    <p>
+      Last updated {{ stations.0.updated_at }} UTC.
+    </p>
+  </section>
+
   <div id="map"></div>
   <script>
     var station_data = {{ station_json|safe }};
