@@ -86,6 +86,13 @@ $lastweek: chartreuse
     fill: rgba($recent, 0.15)
 
 
+// emphasis on the "recent" line that indicates the most up to date data
+circle.now
+  fill: white
+  stroke: darken($recent, 25%)
+  stroke-width: 2px
+
+// vertical rule indicating the current time
 line.now
   stroke: cornflowerblue
   stroke-width: 1px

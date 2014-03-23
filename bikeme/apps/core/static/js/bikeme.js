@@ -134,6 +134,12 @@
         .attr('class', 'line ' + dataset)
         .attr('d', line);
     });
+    plot.append('circle')
+      .datum(latestData)
+      .attr('class', 'now')
+      .attr('r', '3')
+      .attr('cx', function (d) { return xScale(d.date); })
+      .attr('cy', function (d) { return yScale(d.bikes); });
 
     plot.append('line')
       .attr('class', 'now')
