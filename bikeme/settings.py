@@ -62,6 +62,7 @@ WSGI_APPLICATION = 'bikeme.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+CONN_MAX_AGE = 0 if DEBUG else 900   # 15 minutes
 
 DATABASES = {
     'default': dj_database_url.config(default='sqlite:///bikeme.db')
