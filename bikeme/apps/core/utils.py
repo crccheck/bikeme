@@ -11,8 +11,6 @@ import requests
 from .models import Market, Station, Snapshot
 
 
-URL = 'http://bikeme-api.herokuapp.com/{market}/'
-
 logger = logging.getLogger(__name__)
 logger.addHandler(ColorizingStreamHandler())
 
@@ -46,7 +44,8 @@ def update_with_defaults(obj, data):
 
 
 def update_market_bcycle(market):
-    response = requests.get(URL.format(market=market.slug))
+    url_tmpl = 'http://bikeme-api.herokuapp.com/{market}/'
+    response = requests.get(url_tmpl.format(market=market.slug))
     data = response.json()
     scraped_at = parse(data['now'])
     for row in data['results']:
