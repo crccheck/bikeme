@@ -84,13 +84,20 @@ def update_market_bcycle(market):
         logger.info('Marking as inactive')
 
 
-def update_market_divvy(market):
+def update_market_alta(market):
+    lookup = {
+        'chicago': {
+            'url': 'http://divvybikes.com/stations/json/',
+            'timezone': 'America/Chicago',
+        },
+    }
     status_lookup = {
         'In Service': 'available',
     }
-    response = requests.get('http://divvybikes.com/stations/json/')
+    market_data = lookup[market.slug]
+    response = requests.get(market_data['url'])
     data = response.json()
-    tz = gettz('America/Chicago')
+    tz = gettz(market_data['timezone'])
     scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
     for row in data['stationBeanList']:
         defaults = dict(
@@ -165,8 +172,8 @@ def update_all_markets(*market_slugs):
     for market in queryset:
         if market.type == 'bcycle':
             update_market_bcycle(market)
-        elif market.type == 'divvy':
-            update_market_divvy(market)
+        elif market.type == 'alta' or market.type == 'divvy':
+            update_market_alta(market)
         elif market.type == 'citi':
             update_market_citi(market)
         else:

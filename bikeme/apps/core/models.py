@@ -9,10 +9,11 @@ from django.utils.text import slugify
 class Market(models.Model):
     """A market where bikes can be found, usually a city."""
     MARKET_CHOICES = (
+        ('alta', 'Alta'),
         ('bcycle', 'B-Cycle'),
         ('bixi', 'BIXI'),
         ('citi', 'Citi Bike'),
-        ('divvy', 'Divvy'),
+        ('divvy', 'Divvy'),  # deprecated
     )
     name = models.CharField(max_length=30)
     slug = models.SlugField(max_length=30, unique=True)

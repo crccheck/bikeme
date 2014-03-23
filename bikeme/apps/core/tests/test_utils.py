@@ -4,12 +4,12 @@ from django.test import TestCase
 import mock
 
 from ..factories import MarketFactory
-from ..utils import update_market_divvy, update_market_citi
+from ..utils import update_market_alta, update_market_citi
 
 
-class TestDivvy(TestCase):
+class TestAlta(TestCase):
     def setUp(self):
-        self.market = MarketFactory(type='divvy')
+        self.market = MarketFactory(slug='chicago', type='alta')
         with open('bikeme/apps/core/tests/support/divvy_response.json') as f:
             data = json.load(f)
         mock_get = mock.MagicMock(name='mock_get',
@@ -23,7 +23,7 @@ class TestDivvy(TestCase):
         self.mock_requests.stop()
 
     def test_it_works(self):
-        update_market_divvy(self.market)
+        update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
 
 
