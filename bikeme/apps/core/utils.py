@@ -80,7 +80,8 @@ def update_market_bcycle(market):
         station.save()
     qs = market.stations.filter(updated_at__lt=scraped_at)
     if qs.exists():
-        logger.info('Marking as inactive')
+        qs.update(active=False)
+        logger.info('Marked stations as inactive', extra=dict(queryset=qs))
 
 
 def update_market_alta(market):
@@ -136,7 +137,10 @@ def update_market_alta(market):
         )
         station.latest_snapshot = snapshot
         station.save()
-    # WISHLIST auto mark stations as inactive
+    qs = market.stations.filter(updated_at__lt=scraped_at)
+    if qs.exists():
+        qs.update(active=False)
+        logger.info('Marked stations as inactive', extra=dict(queryset=qs))
 
 
 def update_market_citybikes(market):
