@@ -88,6 +88,10 @@ def update_market_bcycle(market):
 def update_market_alta(market):
     # http://www.altabicycleshare.com/locations
     lookup = {
+        'bay-area': {
+            'url': 'http://bayareabikeshare.com/stations/json/',
+            'timezone': 'America/Los_Angeles',
+        },
         'chattanooga': {
             'url': 'http://bikechattanooga.com/stations/json/',
             'timezone': 'America/New_York',
@@ -102,7 +106,7 @@ def update_market_alta(market):
         },
     }
     status_lookup = {
-        'In Service': 'available',
+        'In Service': 'active',
         'Not In Service': 'outofservice',
     }
     market_data = lookup[market.slug]
