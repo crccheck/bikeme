@@ -16,4 +16,5 @@ admin.site.register(models.Station, StationAdmin)
 class SnapshotAdmin(admin.ModelAdmin):
     date_heirarchy = 'timestamp'
     list_display = ('station', 'bikes', 'docks', 'timestamp')
+    ordering = ('-timestamp', )
 admin.site.register(models.Snapshot, SnapshotAdmin)
