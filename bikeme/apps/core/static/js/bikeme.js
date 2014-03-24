@@ -47,7 +47,7 @@
     $el.find('.loading').remove();
     // update status since `updateMaps` can't access the popup content
     var latestData = cleanedData.recent[cleanedData.recent.length - 1];
-    $el.find('.status-bikes').html(latestData.bike);
+    $el.find('.status-bikes').html(latestData.bikes);
     $el.find('.status-docks').html(latestData.docks);
     // $el.find('.status-status').html(latestData.status);
 
