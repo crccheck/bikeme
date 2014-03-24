@@ -156,10 +156,16 @@
   // * MAP POPUP *
   // *************
 
+  var _trans = {
+        outofservice: 'Out of Service'
+      },
+      trans = function (s) {
+        return _trans[s] || s;
+      };
   var getPopupContent = function (station) {
     var title = station.name;
     if (station.status !== 'active') {
-      station.name += ' (' + station.status + ')' ;
+      title += ' (' + trans(station.status) + ')' ;
     }
     var $paper = $('<div><h3>' + title + '</h3>' +
       '<dl>' +
