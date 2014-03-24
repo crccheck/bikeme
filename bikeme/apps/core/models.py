@@ -38,8 +38,8 @@ class Station(models.Model):
     slug = models.SlugField(max_length=60)
     market = models.ForeignKey(Market, related_name='stations')
     # store points as decimals to avoid postgis requirement
-    latitude = models.DecimalField(max_digits=8, decimal_places=5)
-    longitude = models.DecimalField(max_digits=8, decimal_places=5)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
     street = models.CharField(max_length=120)
     zip = models.CharField(max_length=5)
     state = models.CharField(max_length=2)
