@@ -4,7 +4,7 @@ from django.test import TestCase
 import mock
 
 from ..factories import MarketFactory
-from ..utils import update_market_alta, update_market_citi
+from ..utils import update_market_alta, update_market_citybikes
 
 
 class TestAlta(TestCase):
@@ -43,6 +43,6 @@ class TestCityBikes(TestCase):
         self.mock_requests.stop()
 
     def test_it_works(self):
-        update_market_citi(self.market)
+        update_market_citybikes(self.market)
         self.assertEqual(self.market.stations.count(), 331)
         self.assertEqual(int(self.market.stations.all()[0].latitude), 40)
