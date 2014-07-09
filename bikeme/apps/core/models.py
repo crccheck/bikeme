@@ -47,7 +47,7 @@ class Station(models.Model):
     capacity = models.PositiveSmallIntegerField(default=0)
     updated_at = models.DateTimeField()
     latest_snapshot = models.OneToOneField('Snapshot', null=True, blank=True,
-            related_name='+', editable=False)
+        related_name='+', editable=False, on_delete=models.SET_NULL)
     active = models.BooleanField(default=True)
 
     class Meta:
