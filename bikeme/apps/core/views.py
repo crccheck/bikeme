@@ -23,7 +23,7 @@ class Landing(CacheGetMixin, ListView):
     cache_control = {
         'max_age': 60 * 60,  # 1 hour
     }
-    model = models.Market
+    queryset = models.Market.objects.filter(active=True)
 
 
 class MarketDetail(CacheGetMixin, DetailView):
