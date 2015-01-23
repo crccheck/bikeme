@@ -16,7 +16,7 @@ requests==2.5.1
 
 # heroku support
 whitenoise==1.0.6
-gunicorn==19.1.1
+waitress==0.8.9
 newrelic==2.42.0.35
 psycopg2==2.5.4
 raven==5.1.1

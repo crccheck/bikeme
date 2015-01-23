@@ -1,1 +1,1 @@
-web: newrelic-admin run-program gunicorn bikeme.wsgi -w 3
+web: newrelic-admin run-program waitress-serve --port=$PORT bikeme.wsgi:application
