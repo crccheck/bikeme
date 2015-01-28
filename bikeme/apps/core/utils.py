@@ -17,7 +17,12 @@ logger.addHandler(ColorizingStreamHandler())
 def setfield(obj, fieldname, value):
     """Fancy setattr with debugging."""
     old = getattr(obj, fieldname)
-    if str(old) != str(value):
+    if hasattr(old, 'pk'):
+        # foreign key comparison
+        changed = old.pk != value.pk
+    else:
+        changed = str(old) != str(value)
+    if changed:
         setattr(obj, fieldname, value)
         if not hasattr(obj, '_is_dirty'):
             obj._is_dirty = []
@@ -115,7 +120,7 @@ def update_market_alta(market):
     tz = gettz(market_data['timezone'])
     scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
     for row in data['stationBeanList']:
-        defaults = dict(
+        station_defaults = dict(
             latitude=row['latitude'],
             longitude=row['longitude'],
             street=row['stAddress1'],
@@ -127,10 +132,8 @@ def update_market_alta(market):
         station, created = Station.objects.get_or_create(
             name=row['stationName'],
             market=market,
-            defaults=defaults,
+            defaults=station_defaults,
         )
-        if not created:
-            update_with_defaults(station, defaults)
         defaults = dict(
             bikes=row['availableBikes'],
             docks=row['availableDocks'],
@@ -141,8 +144,8 @@ def update_market_alta(market):
             station=station,
             defaults=defaults,
         )
-        station.latest_snapshot = snapshot
-        station.save()
+        station_defaults['latest_snapshot'] = snapshot
+        update_with_defaults(station, station_defaults)
     qs = market.stations.filter(updated_at__lt=scraped_at)
     if qs.exists():
         qs.update(active=False)
