@@ -29,7 +29,7 @@ class TestAlta(TransactionTestCase):
             process_alta(self.market, data, 'America/Chicago')
         with open('bikeme/apps/core/tests/support/divvy_response2.json') as f:
             data = json.load(f)
-        with self.assertNumQueries(2103):
+        with self.assertNumQueries(1203):
             process_alta(self.market, data, 'America/Chicago')
 
 

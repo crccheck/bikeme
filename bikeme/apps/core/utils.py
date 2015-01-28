@@ -51,6 +51,15 @@ def update_with_defaults(obj, data):
         return True
 
 
+def update_with_defaults(obj, data):
+    """
+    For some reason, update_with_defaults is making a ton of extra queries.
+    """
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.save()
+
+
 def update_market_bcycle(market):
     url_tmpl = 'http://bikeme-api.herokuapp.com/{market}/'
     response = requests.get(url_tmpl.format(market=market.slug))
@@ -217,4 +226,4 @@ def update_all_markets(*market_slugs):
                 logger.warn(u'Unknown Market Type: {} Market:'
                         .format(market.type, market))
         except AlreadyScraped:
-            logger.exception()
+            logger.exception('Already Scraped')
