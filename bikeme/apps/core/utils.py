@@ -95,34 +95,12 @@ def update_market_bcycle(market):
         logger.info('Marked stations as inactive', extra=dict(queryset=qs))
 
 
-def update_market_alta(market):
-    # http://www.altabicycleshare.com/locations
-    lookup = {
-        'bay-area': {
-            'url': 'http://bayareabikeshare.com/stations/json/',
-            'timezone': 'America/Los_Angeles',
-        },
-        'chattanooga': {
-            'url': 'http://bikechattanooga.com/stations/json/',
-            'timezone': 'America/New_York',
-        },
-        'chicago': {
-            'url': 'http://www.divvybikes.com/stations/json/',
-            'timezone': 'America/Chicago',
-        },
-        'nyc': {
-            'url': 'http://citibikenyc.com/stations/json/',
-            'timezone': 'America/New_York',
-        },
-    }
+def process_alta(market, data, timezone_str):
     status_lookup = {
         'In Service': 'active',
         'Not In Service': 'outofservice',
     }
-    market_data = lookup[market.slug]
-    response = requests.get(market_data['url'])
-    data = response.json()
-    tz = gettz(market_data['timezone'])
+    tz = gettz(timezone_str)
     scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
     # see if we already scraped this before
     if Snapshot.objects.filter(station__market=market, timestamp=scraped_at).exists():
@@ -161,6 +139,32 @@ def update_market_alta(market):
     if qs.exists():
         qs.update(active=False)
         logger.info('Marked stations as inactive', extra=dict(queryset=qs))
+
+
+def update_market_alta(market):
+    # http://www.altabicycleshare.com/locations
+    lookup = {
+        'bay-area': {
+            'url': 'http://bayareabikeshare.com/stations/json/',
+            'timezone': 'America/Los_Angeles',
+        },
+        'chattanooga': {
+            'url': 'http://bikechattanooga.com/stations/json/',
+            'timezone': 'America/New_York',
+        },
+        'chicago': {
+            'url': 'http://www.divvybikes.com/stations/json/',
+            'timezone': 'America/Chicago',
+        },
+        'nyc': {
+            'url': 'http://citibikenyc.com/stations/json/',
+            'timezone': 'America/New_York',
+        },
+    }
+    market_data = lookup[market.slug]
+    response = requests.get(market_data['url'])
+    data = response.json()
+    process_alta(market, data, market_data['timezone'])
 
 
 def update_market_citybikes(market):

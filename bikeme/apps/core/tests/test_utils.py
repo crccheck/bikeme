@@ -4,31 +4,22 @@ from django.test import TestCase, TransactionTestCase
 import mock
 
 from ..factories import MarketFactory
-from ..utils import update_market_alta, update_market_citybikes, AlreadyScraped
+from ..utils import process_alta, update_market_citybikes, AlreadyScraped
 
 
 class TestAlta(TransactionTestCase):
     def setUp(self):
         self.market = MarketFactory(slug='chicago', type='alta')
-        with open('bikeme/apps/core/tests/support/divvy_response.json') as f:
-            data = json.load(f)
-        mock_get = mock.MagicMock(name='mock_get',
-                **{'json.return_value': data})
-        mock_requests = mock.patch('bikeme.apps.core.utils.requests',
-                **{'get.return_value': mock_get})
-        mock_requests.start()
-        self.mock_requests = mock_requests
-
-    def tearDown(self):
-        self.mock_requests.stop()
 
     def test_it_works(self):
+        with open('bikeme/apps/core/tests/support/divvy_response.json') as f:
+            data = json.load(f)
         with self.assertNumQueries(1803):
-            update_market_alta(self.market)
+            process_alta(self.market, data, 'America/Chicago')
         self.assertEqual(self.market.stations.count(), 300)
         # do it again
         with self.assertRaises(AlreadyScraped):
-            update_market_alta(self.market)
+            process_alta(self.market, data, 'America/Chicago')
         self.assertEqual(self.market.stations.count(), 300)
 
 
