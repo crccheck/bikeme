@@ -2,9 +2,9 @@ from __future__ import division
 
 import logging
 
-from project_runpy import ColorizingStreamHandler
 from dateutil.parser import parse
 from dateutil.tz import gettz
+from project_runpy import ColorizingStreamHandler
 import requests
 
 from .models import Market, Station, Snapshot
@@ -14,10 +14,19 @@ logger = logging.getLogger(__name__)
 logger.addHandler(ColorizingStreamHandler())
 
 
+class AlreadyScraped(Exception):
+    pass
+
+
 def setfield(obj, fieldname, value):
     """Fancy setattr with debugging."""
     old = getattr(obj, fieldname)
-    if str(old) != str(value):
+    if hasattr(old, 'pk'):
+        # foreign key comparison
+        changed = old.pk != value.pk
+    else:
+        changed = str(old) != str(value)
+    if changed:
         setattr(obj, fieldname, value)
         if not hasattr(obj, '_is_dirty'):
             obj._is_dirty = []
@@ -40,6 +49,15 @@ def update_with_defaults(obj, data):
         del obj._is_dirty
         del obj._dirty_fields
         return True
+
+
+def update_with_defaults(obj, data):
+    """
+    For some reason, update_with_defaults is making a ton of extra queries.
+    """
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.save()
 
 
 def update_market_bcycle(market):
@@ -85,6 +103,52 @@ def update_market_bcycle(market):
         logger.info('Marked stations as inactive', extra=dict(queryset=qs))
 
 
+def process_alta(market, data, timezone_str):
+    status_lookup = {
+        'In Service': 'active',
+        'Not In Service': 'outofservice',
+    }
+    tz = gettz(timezone_str)
+    scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
+    # see if we already scraped this before
+    if Snapshot.objects.filter(station__market=market, timestamp=scraped_at).exists():
+        raise AlreadyScraped()
+    # pull all existing stations
+    all_stations_lookup = {x.name: x for x in market.stations.all()}
+    for row in data['stationBeanList']:
+        station_defaults = dict(
+            latitude=row['latitude'],
+            longitude=row['longitude'],
+            street=row['stAddress1'],
+            zip=row['postalCode'][:5],
+            capacity=row['totalDocks'],
+            active=True,
+            updated_at=scraped_at,
+        )
+        if row['stationName'] not in all_stations_lookup:
+            station = Station.objects.create(
+                name=row['stationName'],
+                market=market,
+                **station_defaults)
+        else:
+            station = all_stations_lookup[row['stationName']]
+        # let this explode. If there's a duplicate, then we already scraped so
+        # there's no need to scrape again
+        snapshot = Snapshot.objects.create(
+            timestamp=scraped_at,
+            station=station,
+            bikes=row['availableBikes'],
+            docks=row['availableDocks'],
+            status=status_lookup.get(row['statusValue'], 'outofservice'),
+        )
+        station_defaults['latest_snapshot'] = snapshot
+        update_with_defaults(station, station_defaults)
+    qs = market.stations.filter(updated_at__lt=scraped_at)
+    if qs.exists():
+        qs.update(active=False)
+        logger.info('Marked stations as inactive', extra=dict(queryset=qs))
+
+
 def update_market_alta(market):
     # http://www.altabicycleshare.com/locations
     lookup = {
@@ -97,7 +161,7 @@ def update_market_alta(market):
             'timezone': 'America/New_York',
         },
         'chicago': {
-            'url': 'http://divvybikes.com/stations/json/',
+            'url': 'http://www.divvybikes.com/stations/json/',
             'timezone': 'America/Chicago',
         },
         'nyc': {
@@ -105,48 +169,10 @@ def update_market_alta(market):
             'timezone': 'America/New_York',
         },
     }
-    status_lookup = {
-        'In Service': 'active',
-        'Not In Service': 'outofservice',
-    }
     market_data = lookup[market.slug]
     response = requests.get(market_data['url'])
     data = response.json()
-    tz = gettz(market_data['timezone'])
-    scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
-    for row in data['stationBeanList']:
-        defaults = dict(
-            latitude=row['latitude'],
-            longitude=row['longitude'],
-            street=row['stAddress1'],
-            zip=row['postalCode'][:5],
-            capacity=row['totalDocks'],
-            active=True,
-            updated_at=scraped_at,
-        )
-        station, created = Station.objects.get_or_create(
-            name=row['stationName'],
-            market=market,
-            defaults=defaults,
-        )
-        if not created:
-            update_with_defaults(station, defaults)
-        defaults = dict(
-            bikes=row['availableBikes'],
-            docks=row['availableDocks'],
-            status=status_lookup.get(row['statusValue'], 'outofservice'),
-        )
-        snapshot, created = Snapshot.objects.get_or_create(
-            timestamp=scraped_at,
-            station=station,
-            defaults=defaults,
-        )
-        station.latest_snapshot = snapshot
-        station.save()
-    qs = market.stations.filter(updated_at__lt=scraped_at)
-    if qs.exists():
-        qs.update(active=False)
-        logger.info('Marked stations as inactive', extra=dict(queryset=qs))
+    process_alta(market, data, market_data['timezone'])
 
 
 def update_market_citybikes(market):
@@ -191,10 +217,13 @@ def update_all_markets(*market_slugs):
     else:
         queryset = Market.objects.filter(active=True)
     for market in queryset:
-        if market.type == 'bcycle':
-            update_market_bcycle(market)
-        elif market.type == 'alta':
-            update_market_alta(market)
-        else:
-            logger.warn(u'Unknown Market Type: {} Market:'
-                    .format(market.type, market))
+        try:
+            if market.type == 'bcycle':
+                update_market_bcycle(market)
+            elif market.type == 'alta':
+                update_market_alta(market)
+            else:
+                logger.warn(u'Unknown Market Type: {} Market:'
+                        .format(market.type, market))
+        except AlreadyScraped:
+            logger.exception('Already Scraped')

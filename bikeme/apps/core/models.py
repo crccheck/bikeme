@@ -108,3 +108,4 @@ class Snapshot(models.Model):
 
     class Meta:
         ordering = ('timestamp', )
+        unique_together = ('station', 'timestamp')
