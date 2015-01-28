@@ -26,6 +26,10 @@ class TestAlta(TestCase):
         with self.assertNumQueries(2701):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
+        # do it again
+        with self.assertNumQueries(1201):
+            update_market_alta(self.market)
+        self.assertEqual(self.market.stations.count(), 300)
 
 
 class TestCityBikes(TestCase):
