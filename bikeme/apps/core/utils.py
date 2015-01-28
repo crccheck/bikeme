@@ -119,6 +119,8 @@ def update_market_alta(market):
     data = response.json()
     tz = gettz(market_data['timezone'])
     scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
+    # pull all existing stations
+    all_stations_lookup = {x.name: x for x in market.stations.all()}
     for row in data['stationBeanList']:
         station_defaults = dict(
             latitude=row['latitude'],
@@ -129,11 +131,13 @@ def update_market_alta(market):
             active=True,
             updated_at=scraped_at,
         )
-        station, created = Station.objects.get_or_create(
-            name=row['stationName'],
-            market=market,
-            defaults=station_defaults,
-        )
+        if row['stationName'] not in all_stations_lookup:
+            station = Station.objects.create(
+                name=row['stationName'],
+                market=market,
+                **station_defaults)
+        else:
+            station = all_stations_lookup[row['stationName']]
         defaults = dict(
             bikes=row['availableBikes'],
             docks=row['availableDocks'],

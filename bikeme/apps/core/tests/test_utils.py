@@ -23,11 +23,11 @@ class TestAlta(TestCase):
         self.mock_requests.stop()
 
     def test_it_works(self):
-        with self.assertNumQueries(2701):
+        with self.assertNumQueries(1802):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
         # do it again
-        with self.assertNumQueries(1201):
+        with self.assertNumQueries(902):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
 
