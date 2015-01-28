@@ -12,7 +12,7 @@ class TestAlta(TransactionTestCase):
         self.market = MarketFactory(slug='chicago', type='alta')
 
     def test_it_works(self):
-        with open('bikeme/apps/core/tests/support/divvy_response.json') as f:
+        with open('bikeme/apps/core/tests/support/divvy_response1.json') as f:
             data = json.load(f)
         with self.assertNumQueries(1803):
             process_alta(self.market, data, 'America/Chicago')
@@ -21,6 +21,16 @@ class TestAlta(TransactionTestCase):
         with self.assertRaises(AlreadyScraped):
             process_alta(self.market, data, 'America/Chicago')
         self.assertEqual(self.market.stations.count(), 300)
+
+    def test_it_updates(self):
+        with open('bikeme/apps/core/tests/support/divvy_response1.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(1803):
+            process_alta(self.market, data, 'America/Chicago')
+        with open('bikeme/apps/core/tests/support/divvy_response2.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(2103):
+            process_alta(self.market, data, 'America/Chicago')
 
 
 class TestCityBikes(TestCase):
