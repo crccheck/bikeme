@@ -4,7 +4,6 @@ import logging
 
 from dateutil.parser import parse
 from dateutil.tz import gettz
-from django.db import IntegrityError
 from project_runpy import ColorizingStreamHandler
 import requests
 

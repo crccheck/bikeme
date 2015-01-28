@@ -1,9 +1,19 @@
 NAME=mapbike
+SHELL=/bin/bash
+MANAGE=python manage.py
 
 
 test:
 	ENVIRONMENT=test python manage.py test
 
+resetdb:
+	@if [[ ${DATABASE_URL} == *"amazonaws"* ]]; then exit -1; fi
+	-phd dropdb
+	phd createdb
+	echo "CREATE EXTENSION postgis;" | phd psql
+	$(MANAGE) syncdb --noinput
+	$(MANAGE) migrate --noinput
+	$(MANAGE) loaddata markets
 
 # There's a long wait in here on purpose!
 testdata/chicago:
