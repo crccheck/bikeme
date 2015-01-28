@@ -23,7 +23,8 @@ class TestAlta(TestCase):
         self.mock_requests.stop()
 
     def test_it_works(self):
-        update_market_alta(self.market)
+        with self.assertNumQueries(2701):
+            update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
 
 
