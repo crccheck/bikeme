@@ -102,7 +102,7 @@ def update_market_alta(market):
             'timezone': 'America/New_York',
         },
         'chicago': {
-            'url': 'http://divvybikes.com/stations/json/',
+            'url': 'http://www.divvybikes.com/stations/json/',
             'timezone': 'America/Chicago',
         },
         'nyc': {

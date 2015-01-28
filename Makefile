@@ -5,6 +5,12 @@ test:
 	ENVIRONMENT=test python manage.py test
 
 
+# There's a long wait in here on purpose!
+testdata/chicago:
+	curl http://www.divvybikes.com/stations/json/ > bikeme/apps/core/tests/support/divvy_response1.json
+	sleep 600
+	curl http://www.divvybikes.com/stations/json/ > bikeme/apps/core/tests/support/divvy_response2.json
+
 docker/build:
 	docker build -t crccheck/${NAME} .
 
