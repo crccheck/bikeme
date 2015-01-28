@@ -2,9 +2,10 @@ from __future__ import division
 
 import logging
 
-from project_runpy import ColorizingStreamHandler
 from dateutil.parser import parse
 from dateutil.tz import gettz
+from django.db import IntegrityError
+from project_runpy import ColorizingStreamHandler
 import requests
 
 from .models import Market, Station, Snapshot
@@ -138,15 +139,14 @@ def update_market_alta(market):
                 **station_defaults)
         else:
             station = all_stations_lookup[row['stationName']]
-        defaults = dict(
+        # let this explode. If there's a duplicate, then we already scraped so
+        # there's no need to scrape again
+        snapshot = Snapshot.objects.create(
+            timestamp=scraped_at,
+            station=station,
             bikes=row['availableBikes'],
             docks=row['availableDocks'],
             status=status_lookup.get(row['statusValue'], 'outofservice'),
-        )
-        snapshot, created = Snapshot.objects.get_or_create(
-            timestamp=scraped_at,
-            station=station,
-            defaults=defaults,
         )
         station_defaults['latest_snapshot'] = snapshot
         update_with_defaults(station, station_defaults)
@@ -198,10 +198,13 @@ def update_all_markets(*market_slugs):
     else:
         queryset = Market.objects.filter(active=True)
     for market in queryset:
-        if market.type == 'bcycle':
-            update_market_bcycle(market)
-        elif market.type == 'alta':
-            update_market_alta(market)
-        else:
-            logger.warn(u'Unknown Market Type: {} Market:'
-                    .format(market.type, market))
+        try:
+            if market.type == 'bcycle':
+                update_market_bcycle(market)
+            elif market.type == 'alta':
+                update_market_alta(market)
+            else:
+                logger.warn(u'Unknown Market Type: {} Market:'
+                        .format(market.type, market))
+        except IntegrityError:
+            logger.exception()

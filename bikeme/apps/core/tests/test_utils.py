@@ -1,13 +1,14 @@
 import json
 
-from django.test import TestCase
+from django.db import IntegrityError
+from django.test import TestCase, TransactionTestCase
 import mock
 
 from ..factories import MarketFactory
 from ..utils import update_market_alta, update_market_citybikes
 
 
-class TestAlta(TestCase):
+class TestAlta(TransactionTestCase):
     def setUp(self):
         self.market = MarketFactory(slug='chicago', type='alta')
         with open('bikeme/apps/core/tests/support/divvy_response.json') as f:
@@ -27,7 +28,7 @@ class TestAlta(TestCase):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
         # do it again
-        with self.assertNumQueries(902):
+        with self.assertRaises(IntegrityError):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
 
