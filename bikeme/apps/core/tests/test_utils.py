@@ -1,11 +1,10 @@
 import json
 
-from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
 import mock
 
 from ..factories import MarketFactory
-from ..utils import update_market_alta, update_market_citybikes
+from ..utils import update_market_alta, update_market_citybikes, AlreadyScraped
 
 
 class TestAlta(TransactionTestCase):
@@ -24,11 +23,11 @@ class TestAlta(TransactionTestCase):
         self.mock_requests.stop()
 
     def test_it_works(self):
-        with self.assertNumQueries(1802):
+        with self.assertNumQueries(1803):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
         # do it again
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(AlreadyScraped):
             update_market_alta(self.market)
         self.assertEqual(self.market.stations.count(), 300)
 

@@ -15,6 +15,10 @@ logger = logging.getLogger(__name__)
 logger.addHandler(ColorizingStreamHandler())
 
 
+class AlreadyScraped(Exception):
+    pass
+
+
 def setfield(obj, fieldname, value):
     """Fancy setattr with debugging."""
     old = getattr(obj, fieldname)
@@ -120,6 +124,9 @@ def update_market_alta(market):
     data = response.json()
     tz = gettz(market_data['timezone'])
     scraped_at = parse(data['executionTime']).replace(tzinfo=tz)
+    # see if we already scraped this before
+    if Snapshot.objects.filter(station__market=market, timestamp=scraped_at).exists():
+        raise AlreadyScraped()
     # pull all existing stations
     all_stations_lookup = {x.name: x for x in market.stations.all()}
     for row in data['stationBeanList']:
@@ -206,5 +213,5 @@ def update_all_markets(*market_slugs):
             else:
                 logger.warn(u'Unknown Market Type: {} Market:'
                         .format(market.type, market))
-        except IntegrityError:
+        except AlreadyScraped:
             logger.exception()
