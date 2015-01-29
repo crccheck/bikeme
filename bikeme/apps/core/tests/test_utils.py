@@ -4,12 +4,40 @@ from django.test import TestCase, TransactionTestCase
 import mock
 
 from ..factories import MarketFactory
-from ..utils import process_alta, update_market_citybikes, AlreadyScraped
+from ..utils import (process_alta, process_bcycle, update_market_citybikes,
+    AlreadyScraped)
+
+
+class TestBcycle(TransactionTestCase):
+    def setUp(self):
+        self.market = MarketFactory(slug='bcycle')
+
+    def test_it_works(self):
+        with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(273):
+            process_bcycle(self.market, data)
+        self.assertEqual(self.market.stations.count(), 45)
+        # do it again
+        with self.assertRaises(AlreadyScraped):
+            process_bcycle(self.market, data)
+        # assert number of stations did not change
+        self.assertEqual(self.market.stations.count(), 45)
+
+    def test_it_updates(self):
+        with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(273):
+            process_bcycle(self.market, data)
+        with open('bikeme/apps/core/tests/support/austin_response2.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(183):
+            process_bcycle(self.market, data)
 
 
 class TestAlta(TransactionTestCase):
     def setUp(self):
-        self.market = MarketFactory(slug='chicago', type='alta')
+        self.market = MarketFactory(slug='chicago')
 
     def test_it_works(self):
         with open('bikeme/apps/core/tests/support/divvy_response1.json') as f:
@@ -20,6 +48,7 @@ class TestAlta(TransactionTestCase):
         # do it again
         with self.assertRaises(AlreadyScraped):
             process_alta(self.market, data, 'America/Chicago')
+        # assert number of stations did not change
         self.assertEqual(self.market.stations.count(), 300)
 
     def test_it_updates(self):

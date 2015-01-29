@@ -16,6 +16,13 @@ resetdb:
 	$(MANAGE) loaddata markets
 
 # There's a long wait in here on purpose!
+# TODO combine these together so they share 'sleep'
+# use XMLHttpRequest to get compressed json
+testdata/austin:
+	curl -H "X-Requested-With: XMLHttpRequest" http://bikeme-api.herokuapp.com/austin/ > bikeme/apps/core/tests/support/austin_response1.json
+	sleep 600
+	curl -H "X-Requested-With: XMLHttpRequest" http://bikeme-api.herokuapp.com/austin/ > bikeme/apps/core/tests/support/austin_response2.json
+
 testdata/chicago:
 	curl http://www.divvybikes.com/stations/json/ > bikeme/apps/core/tests/support/divvy_response1.json
 	sleep 600
