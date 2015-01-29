@@ -62,6 +62,9 @@ def update_with_defaults(obj, data):
 
 def process_bcycle(market, data):
     scraped_at = parse(data['now'])
+    # see if we already scraped this before
+    if Snapshot.objects.filter(station__market=market, timestamp=scraped_at).exists():
+        raise AlreadyScraped()
     for row in data['results']:
         state, zip_code = row['state_zip'].split(' ', 2)
         capacity = row['bikes'] + row['docks']
