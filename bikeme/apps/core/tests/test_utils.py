@@ -24,6 +24,16 @@ class TestBcycle(TransactionTestCase):
         # assert number of stations did not change
         self.assertEqual(self.market.stations.count(), 45)
 
+    def test_it_updates(self):
+        with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(362):
+            process_bcycle(self.market, data)
+        with open('bikeme/apps/core/tests/support/austin_response2.json') as f:
+            data = json.load(f)
+        with self.assertNumQueries(362):
+            process_bcycle(self.market, data)
+
 
 class TestAlta(TransactionTestCase):
     def setUp(self):
