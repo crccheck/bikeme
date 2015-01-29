@@ -4,6 +4,7 @@ from django.test import TestCase, TransactionTestCase
 import mock
 
 from ..factories import MarketFactory
+from ..models import Station
 from ..utils import (process_alta, process_bcycle, update_market_citybikes,
     AlreadyScraped)
 
@@ -15,9 +16,13 @@ class TestBcycle(TransactionTestCase):
     def test_it_works(self):
         with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
             data = json.load(f)
-        with self.assertNumQueries(273):
+        with self.assertNumQueries(185):
             process_bcycle(self.market, data)
         self.assertEqual(self.market.stations.count(), 45)
+        # assert latest_snapshot was stored
+        self.assertEqual(
+            Station.objects.filter(latest_snapshot__isnull=False).count(),
+            self.market.stations.count())
         # do it again
         with self.assertRaises(AlreadyScraped):
             process_bcycle(self.market, data)
@@ -27,7 +32,7 @@ class TestBcycle(TransactionTestCase):
     def test_it_updates(self):
         with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
             data = json.load(f)
-        with self.assertNumQueries(273):
+        with self.assertNumQueries(185):
             process_bcycle(self.market, data)
         with open('bikeme/apps/core/tests/support/austin_response2.json') as f:
             data = json.load(f)

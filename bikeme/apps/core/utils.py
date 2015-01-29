@@ -67,6 +67,7 @@ def process_bcycle(market, data):
         raise AlreadyScraped()
     # pull all existing stations
     all_stations_lookup = {x.name: x for x in market.stations.all()}
+    snapshots_to_add = []
     for row in data['results']:
         state, zip_code = row['state_zip'].split(' ', 2)
         capacity = row['bikes'] + row['docks']
@@ -89,15 +90,19 @@ def process_bcycle(market, data):
             station = all_stations_lookup[row['name']]
         # let this explode. If there's a duplicate, then we already scraped so
         # there's no need to scrape again
-        snapshot = Snapshot.objects.create(
+        snapshots_to_add.append(Snapshot(
             timestamp=scraped_at,
             station=station,
             bikes=row['bikes'],
             docks=row['docks'],
             status=row['status'],
-        )
-        station_defaults['latest_snapshot'] = snapshot
-        update_with_defaults(station, station_defaults)
+        ))
+        # station_defaults['latest_snapshot'] = snapshot
+        # update_with_defaults(station, station_defaults)
+    snapshots_added = Snapshot.objects.bulk_create(snapshots_to_add)
+    for snapshot in snapshots_added:
+        snapshot.station.latest_snapshot = snapshot
+        snapshot.station.save()
     qs = market.stations.filter(updated_at__lt=scraped_at)
     if qs.exists():
         qs.update(active=False)
