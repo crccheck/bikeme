@@ -60,10 +60,7 @@ def update_with_defaults(obj, data):
     obj.save()
 
 
-def update_market_bcycle(market):
-    url_tmpl = 'http://bikeme-api.herokuapp.com/{market}/'
-    response = requests.get(url_tmpl.format(market=market.slug))
-    data = response.json()
+def process_bcycle(market, data):
     scraped_at = parse(data['now'])
     for row in data['results']:
         state, zip_code = row['state_zip'].split(' ', 2)
@@ -101,6 +98,13 @@ def update_market_bcycle(market):
     if qs.exists():
         qs.update(active=False)
         logger.info('Marked stations as inactive', extra=dict(queryset=qs))
+
+
+def update_market_bcycle(market):
+    url_tmpl = 'http://bikeme-api.herokuapp.com/{market}/'
+    response = requests.get(url_tmpl.format(market=market.slug))
+    data = response.json()
+    process_bcycle(market, data)
 
 
 def process_alta(market, data, timezone_str):
