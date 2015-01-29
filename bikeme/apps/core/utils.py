@@ -87,15 +87,14 @@ def process_bcycle(market, data):
                 **station_defaults)
         else:
             station = all_stations_lookup[row['name']]
-        defaults = dict(
+        # let this explode. If there's a duplicate, then we already scraped so
+        # there's no need to scrape again
+        snapshot = Snapshot.objects.create(
+            timestamp=scraped_at,
+            station=station,
             bikes=row['bikes'],
             docks=row['docks'],
             status=row['status'],
-        )
-        snapshot, created = Snapshot.objects.get_or_create(
-            timestamp=scraped_at,
-            station=station,
-            defaults=defaults,
         )
         station_defaults['latest_snapshot'] = snapshot
         update_with_defaults(station, station_defaults)
