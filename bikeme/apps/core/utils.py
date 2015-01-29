@@ -65,10 +65,12 @@ def process_bcycle(market, data):
     # see if we already scraped this before
     if Snapshot.objects.filter(station__market=market, timestamp=scraped_at).exists():
         raise AlreadyScraped()
+    # pull all existing stations
+    all_stations_lookup = {x.name: x for x in market.stations.all()}
     for row in data['results']:
         state, zip_code = row['state_zip'].split(' ', 2)
         capacity = row['bikes'] + row['docks']
-        defaults = dict(
+        station_defaults = dict(
             latitude=row['latitude'],
             longitude=row['longitude'],
             street=row['street'],
@@ -78,13 +80,13 @@ def process_bcycle(market, data):
             active=True,
             updated_at=scraped_at,
         )
-        station, created = Station.objects.get_or_create(
-            name=row['name'],
-            market=market,
-            defaults=defaults,
-        )
-        if not created:
-            update_with_defaults(station, defaults)
+        if row['name'] not in all_stations_lookup:
+            station = Station.objects.create(
+                name=row['name'],
+                market=market,
+                **station_defaults)
+        else:
+            station = all_stations_lookup[row['name']]
         defaults = dict(
             bikes=row['bikes'],
             docks=row['docks'],
@@ -95,8 +97,8 @@ def process_bcycle(market, data):
             station=station,
             defaults=defaults,
         )
-        station.latest_snapshot = snapshot
-        station.save()
+        station_defaults['latest_snapshot'] = snapshot
+        update_with_defaults(station, station_defaults)
     qs = market.stations.filter(updated_at__lt=scraped_at)
     if qs.exists():
         qs.update(active=False)

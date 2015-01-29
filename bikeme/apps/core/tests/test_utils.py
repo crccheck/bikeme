@@ -15,7 +15,7 @@ class TestBcycle(TransactionTestCase):
     def test_it_works(self):
         with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
             data = json.load(f)
-        with self.assertNumQueries(362):
+        with self.assertNumQueries(318):
             process_bcycle(self.market, data)
         self.assertEqual(self.market.stations.count(), 45)
         # do it again
@@ -27,11 +27,11 @@ class TestBcycle(TransactionTestCase):
     def test_it_updates(self):
         with open('bikeme/apps/core/tests/support/austin_response1.json') as f:
             data = json.load(f)
-        with self.assertNumQueries(362):
+        with self.assertNumQueries(318):
             process_bcycle(self.market, data)
         with open('bikeme/apps/core/tests/support/austin_response2.json') as f:
             data = json.load(f)
-        with self.assertNumQueries(362):
+        with self.assertNumQueries(228):
             process_bcycle(self.market, data)
 
 
